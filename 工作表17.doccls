@@ -1,0 +1,11 @@
+﻿Sub test0709()
+
+For i = 0.1 To 1 Step 0.0001
+
+    Range("M27") = i
+    Fr = Range("M30")
+    If Fr < 1 Then Exit For
+
+Next
+
+End Sub
