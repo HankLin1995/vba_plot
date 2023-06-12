@@ -1,4 +1,16 @@
 Attribute VB_Name = "Test"
+
+Sub test_getMinZ()
+
+Dim obj As New clsPL
+
+a = obj.getMinZ(185382.888, 2615462.18)
+
+Debug.Assert a = 32.346
+
+End Sub
+
+
 Sub test_TIN_points()
 
 Dim CAD As New clsACAD

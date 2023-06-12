@@ -316,6 +316,8 @@ End Sub
 
 Sub checkZFromTable(ByVal r As Double) '20210802
 
+'r是指radius
+
 Dim PTsObj As New clsPTs_Table
 Dim pt As New clsPt
 
@@ -332,13 +334,57 @@ For j = 0 To UBound(pts) Step co
 
     If IsEmpty(Z) Then
     
+        Call getMinZ(X1, Y1, Z, d)
+        
+        Call pt.getPropertiesByUser("999", X1, Y1, Z, "ADD")
+        Call pt.CreatePoint(0.5)
+        
+        If d > 1 Then
+        
         Set circleobj = CAD.AddCircleCO(X1, Y1, r)
         circleobj.Layer = "平面圖-注意點"
         
         PL.Color = 3
+        
+        End If
     
     End If
 
 Next
 
 End Sub
+
+Sub getMinZ(ByVal X1 As Double, ByVal Y1 As Double, ByRef Z, ByRef d)
+
+Dim resultArray() As Variant
+
+With Sheets("總表")
+
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+    
+    ReDim resultArray(1 To lr - 2 + 1, 1 To 2) ' 設定陣列的大小為計算結果的數量
+    
+    For r = 2 To lr
+    
+        X0 = .Cells(r, 2)
+        Y0 = .Cells(r, 3)
+    
+        Z = .Cells(r, 4)
+        d = ((X1 - X0) ^ 2 + (Y1 - Y0) ^ 2) ^ 0.5
+
+        resultArray(r - 1, 1) = d ' 假設計算X值的函數為 計算X值()
+        resultArray(r - 1, 2) = Z ' 假設計算Y值的函數為 計算Y值()
+    
+    Next
+
+End With
+
+Dim myFun As New clsMyfunction
+
+Call myFun.MergeSort_array(resultArray, 1)
+
+Z = resultArray(1, 2)
+d = resultArray(1, 1)
+
+End Sub
+
