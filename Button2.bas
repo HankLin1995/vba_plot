@@ -9,7 +9,7 @@ Dim mpt(2) As Double
 
 With Sheets("¤¤¤ß½u")
 
-For r = 3 To 21
+For r = 3 To .Cells(.Rows.Count, 1).End(xlUp).Row
 
     myloc = .Cells(r, 1)
     tmp = Split(.Cells(r, 3), ",")

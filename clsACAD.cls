@@ -930,6 +930,7 @@ Else
 End If
 
 For Each it In myAttr
+    Debug.Print it.TagString
     coll.Add it.TextString, it.TagString
 Next
 

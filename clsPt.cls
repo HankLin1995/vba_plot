@@ -80,11 +80,28 @@ po = CAD.tranIPoint(BLK.InsertionPoint)
 
 If coll.Count = 0 Then Exit Sub
 
-PT_NUM = coll("POINT")
+PT_NUM = coll("PT_NUM")
 E = po(0)
 N = po(1)
-Z = coll("ELEV")
-CD = coll("DESC")
+Z = coll("PT_Z")
+CD = coll("PT_CD")
+
+End Sub
+
+
+Sub getPropertiesByBlock_Doris(ByVal BLK As Object)
+
+'po = BLK.InsertionPoint
+Set coll = CAD.getBlockAttr(BLK)
+po = CAD.tranIPoint(BLK.InsertionPoint)
+
+If coll.Count = 0 Then Exit Sub
+
+PT_NUM = coll(1)
+E = po(0)
+N = po(1)
+Z = coll(2)
+CD = coll(3)
 
 End Sub
 
@@ -113,9 +130,9 @@ txtpt(0) = E: txtpt(1) = N
 
 arr = Array(PT_NUM, Z, CD)
 
-Set ptobj = CAD.InsertBlock(txtpt, "Point", txtheight, arr) ' coll_attr)
+Set ptObj = CAD.InsertBlock(txtpt, "Point", txtheight, arr) ' coll_attr)
 
-ptobj.Layer = "平面圖-點"
+ptObj.Layer = "平面圖-點"
 
 End Sub
 

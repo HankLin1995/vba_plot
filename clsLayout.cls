@@ -101,6 +101,9 @@ End Sub
 
 Sub SortLayout(ByVal IsAutoCAD As Boolean)
 
+If MyACAD.CADVer = "ICAD" Then Exit Sub
+
+
 Dim layout As Object 'AcadLayout
 ReDim LayoutArr(1 To lr - sr + 1, 1 To 2)
 
@@ -180,8 +183,9 @@ i = 1
 
         psName = .Cells(r, MSNumCol) '.Cells(r, 3) & "," & i
         
-        Set layout = LayoutArr(i, 2)
+        Set layout = ACAD.Layouts.Item("配置2") ' LayoutArr(i, 2)
         ACAD.ActiveLayout = layout
+        
         layout.ConfigName = MyConfigName
         layout.CanonicalMediaName = MyCanonicalMediaName
         layout.StyleSheet = MyStyleSheet
@@ -499,7 +503,9 @@ Dim Ldpt(2) As Double
 Dim rupt(2) As Double
 Dim txtpt(2) As Double
 
-ret = ACAD.Utility.GetPoint(, "請選擇圖框產生的起始點")
+'ret = ACAD.Utility.GetPoint(, "請選擇圖框產生的起始點")
+
+ret = MyACAD.GetPoint("請選擇圖框產生的起始點")
 
 X_MS = ret(0): Y_MS = ret(1)
 
@@ -587,7 +593,8 @@ For Each Item In sset
         s = Item.TextString
     
         Debug.Print Item.TextString
-        pt = Item.TextAlignmentPoint
+        'pt = Item.TextAlignmentPoint
+        pt = MyACAD.tranIPoint(Item.TextAlignmentPoint)
         
         collCenter.Add pt
         
@@ -601,7 +608,7 @@ For Each Item In sset
 
     Else
     
-        RecArr = Item.coordinates
+        RecArr = MyACAD.tranIPoints(Item.coordinates)
     
         l = (RecArr(6) - RecArr(0))
         collScale.Add dx / l

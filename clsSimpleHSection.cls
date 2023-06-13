@@ -268,7 +268,7 @@ CD = args(4)
 txtpt(0) = X: txtpt(1) = Y
 
 ACAD.ActiveLayer = ACAD.Layers("PT_Point")
-Set ptobj = mo.AddPoint(txtpt)
+Set ptObj = mo.AddPoint(txtpt)
 
 ACAD.ActiveLayer = ACAD.Layers("PT_NUM")
 Set PT_NUMtxtobj = mo.AddText(PT_NUM, txtpt, txtheight)

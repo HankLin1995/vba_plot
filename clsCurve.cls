@@ -91,11 +91,11 @@ For j = 0 To step
     dx = 2 * Radius * Sin(ang) * Sin(ang)
     dy = 2 * Radius * Sin(ang) * Cos(ang)
     
-    Set ptobj = CAD.AddPointCO(Xec + dx, Yec + dy)
+    Set ptObj = CAD.AddPointCO(Xec + dx, Yec + dy)
     
-    ptobj.rotate mypt, math.deg2rad(-fi + 90)
+    ptObj.rotate mypt, math.deg2rad(-fi + 90)
     
-    collCurvePt.Add ptobj
+    collCurvePt.Add ptObj
 
 Next
 

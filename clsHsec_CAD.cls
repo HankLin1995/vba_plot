@@ -113,7 +113,8 @@ Set PLs = CAD.CreateSSET("SS2")
 
 For Each PL In PLs
 
-    If TypeName(PL) <> "IAcadBlockReference" Then
+    'Debug.Print TypeName(PL)
+    If TypeName(PL) Like "*Poly*" Then
         collPLs.Add PL
     End If
 
@@ -152,7 +153,9 @@ For Each EG In collEGs
         'crossPT = CAD.tranIPoints(EG.IntersectWith(PL, 1))  'acExtendThisEntity))
         crossPT = CAD.IntersectWith(EG, PL, 1, IsIntersect) '20210901 ¿ù»~°»´ú
         CD = PLobj.PLname
-        
+       ' kk = kk + 1
+        'Debug.Print CD & kk
+       ' If kk = 134 Then Stop
         If IsIntersect Then '20210901
         
             For i = 0 To UBound(crossPT) Step 3

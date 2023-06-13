@@ -130,7 +130,7 @@ End Sub
 
 Sub test_getpoint()
 
-Dim CAD As New clsICAD
+Dim CAD As New clsACAD
 
 o = CAD.GetPoint("test")
 

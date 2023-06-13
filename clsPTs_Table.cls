@@ -230,7 +230,7 @@ lr = .Cells(.Rows.Count, 1).End(xlUp).Row
 End With
 End Sub
 
-Sub ExportCSV() '輸出CSV
+Sub ExportCSV_ForWEBGIS() '輸出CSV
 
 Set wk = Workbooks.Add
 
@@ -250,6 +250,42 @@ f = Application.GetSaveAsFilename & ".csv"
 If f = "False.csv" Then MsgBox "文件尚未存檔": wk.Close False: Exit Sub
 
 wk.SaveAs Filename:=f, FileFormat:=xlCSV, CreateBackup:=False
+
+wk.Close False
+
+End With
+
+End Sub
+
+Sub ExportCSV() '輸出CSV,0511add,ForSTONEX
+
+Set wk = Workbooks.Add
+
+With sht
+
+lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+
+wk.Sheets(1).Cells(1, 1) = "點名"
+wk.Sheets(1).Cells(1, 2) = "北坐標"
+wk.Sheets(1).Cells(1, 3) = "東坐標"
+wk.Sheets(1).Cells(1, 4) = "高程"
+wk.Sheets(1).Cells(1, 5) = "編碼"
+
+For r = 2 To lr
+
+    wk.Sheets(1).Cells(r, 1) = .Cells(r, 1)
+    wk.Sheets(1).Cells(r, 2) = .Cells(r, 3)
+    wk.Sheets(1).Cells(r, 3) = .Cells(r, 2)
+    wk.Sheets(1).Cells(r, 4) = .Cells(r, 4)
+    wk.Sheets(1).Cells(r, 5) = .Cells(r, 5)
+
+Next
+
+f = Application.GetSaveAsFilename
+
+If f = "False.csv" Then MsgBox "文件尚未存檔": wk.Close False: Exit Sub
+
+wk.SaveAs Filename:=f & "csv", FileFormat:=xlCSV, CreateBackup:=False
 
 wk.Close False
 

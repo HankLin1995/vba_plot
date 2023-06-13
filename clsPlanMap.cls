@@ -135,6 +135,31 @@ Next
 
 End Sub
 
+Sub ExportDataToExcel_Doris() '匯入點
+
+If IsLT = True Then MsgBox "LT版本不支援喔!": Exit Sub
+
+If MsgBox("是否要清除既有點資料?", vbYesNo) = vbYes Then Call myFunc.ClearData(Sheets("FIX_POINT"), 2, 1, 5)
+
+MsgBox "請移動至CAD選取要匯入的點位"
+
+Set sset = CAD.CreateSSET("SS1")
+
+For Each it In sset
+
+        If TypeName(it) Like "*Block*" Then
+    
+            Debug.Print TypeName(it)
+    
+        Call pt.getPropertiesByBlock_Doris(it)
+        Call pt.AppendData_TYLin
+    
+    End If
+
+Next
+
+End Sub
+
 Sub ExportDataToExcel_OldPT() '匯入點(舊值)
 
 Dim PTsObj As New clsPTs_Table

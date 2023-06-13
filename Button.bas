@@ -443,7 +443,7 @@ For Each it In sset
 
     Debug.Print TypeName(it)
 
-    If TypeName(it) Like "*Poly*" Then
+    If TypeName(it) = "IAcadPolyline" Or TypeName(it) Like "*LWPolyline" Then
     
         Call PLobj.getPropertiesByPL(it)
         Call PLobj.checkZFromTable(r)
@@ -451,6 +451,8 @@ For Each it In sset
     End If
 
 Next
+
+MsgBox "Complete!", vbInformation
 
 End Sub
 
@@ -520,6 +522,9 @@ Case "1"
 obj.ExportDataToExcel
 Case "2"
 obj.ExportDataToExcel_OldPT
+
+Case "3"
+obj.ExportDataToExcel_Doris
 
 End Select
 

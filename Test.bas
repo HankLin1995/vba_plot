@@ -1,12 +1,70 @@
 Attribute VB_Name = "Test"
 
-Sub test_getMinZ()
 
-Dim obj As New clsPL
+Sub test_setLayout()
 
-a = obj.getMinZ(185382.888, 2615462.18)
+Dim CAD As New clsACAD
 
-Debug.Assert a = 32.346
+Set layout = CAD.acaddoc.Layouts
+
+End Sub
+
+Sub test_getPLs_Addpoint() '20221227
+
+Dim CAD As New clsACAD
+Set PLs = CAD.CreateSSET("SS1")
+
+For Each PL In PLs
+
+    Dim obj As New clsPL
+    Call obj.getPropertiesByPL(PL)
+    Call obj.addPointByPL
+
+Next
+
+End Sub
+
+Sub test_createXY() '20221227
+
+Dim o As New clsPt
+Dim CAD As New clsACAD
+
+cnt = InputBox("要放樣幾次")
+
+If cnt = "" Then Exit Sub
+
+For i = 1 To cnt
+
+pt = CAD.GetPoint("請點選要標註的點資料")
+
+X = Round(pt(0), 3)
+Y = Round(pt(1), 3)
+
+Call o.getPropertiesByUser("放樣", X, Y, X, Y)
+Call o.CreatePoint(0.5)
+Call o.AppendData
+
+Next
+
+End Sub
+
+Sub test_createXYpt(ByVal X As Double, ByVal Y As Double)
+
+Dim CAD As New clsACAD
+
+Call CAD.AddPointCO(X, Y)
+
+Dim txtpt(2) As Double
+
+txtpt(0) = X + 10
+txtpt(1) = Y - 5
+
+Call CAD.AddText("X=" & CStr(X), txtpt, 5)
+
+txtpt(0) = X + 10
+txtpt(1) = Y - 15
+
+Call CAD.AddText("Y=" & CStr(Y), txtpt, 5)
 
 End Sub
 
@@ -25,7 +83,7 @@ For r = 2 To 28
     pt(1) = .Cells(r, 3)
     pt(2) = .Cells(r, 4)
 
-    Set ptobj = CAD.AddPoint(pt)
+    Set ptObj = CAD.AddPoint(pt)
 
 Next
 
@@ -221,9 +279,7 @@ For Each PL In o
     
 Next
 
-
 End Sub
-
 
 
 

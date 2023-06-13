@@ -439,9 +439,9 @@ Sub ClearStation()
 
 MsgBox "請移動至CAD框選要刪除的樁號圖層"
 
-Set mysset = CAD.CreateSSET(, "8", "平面圖-橫斷樁")
+Set mySSET = CAD.CreateSSET(, "8", "平面圖-橫斷樁")
 
-For Each it In mysset
+For Each it In mySSET
 
     it.Delete
 
