@@ -59,7 +59,7 @@ End With
 End Sub
 
 
-Sub test() '就是個測試
+Sub Test() '就是個測試
 
 arr1 = Array(0.15, 0.45, 0.4, 0)
 arr2 = Array(0, 0.45, 0, -0.1)

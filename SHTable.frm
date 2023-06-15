@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Sub cmdAdd_Click()
 
 With Me
@@ -59,7 +60,7 @@ Private Sub CommandButton1_Click()
 
 Dim a As New clsSHtmp
 
-a.test
+a.Test
 
 End Sub
 

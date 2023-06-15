@@ -1,41 +1,50 @@
-ï»¿Const URL_tmp = "https://script.google.com/macros/s/AKfycbzqmi_QmyWKLjoAglzbkua_IDQPAligdmh2DmpVIg93_XZl4Rn2svZoQkOLxifPjSGuFQ/exec"
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "ThisWorkbook"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
+Const URL_tmp = "https://script.google.com/macros/s/AKfycbzqmi_QmyWKLjoAglzbkua_IDQPAligdmh2DmpVIg93_XZl4Rn2svZoQkOLxifPjSGuFQ/exec"
 
 Private Sub Workbook_Open()
 
-mode = InputBox("è«‹é¸æ“‡ä½¿ç”¨è€…çš„CADç‰ˆæœ¬" & vbNewLine & "1.AutoCAD" & vbNewLine & "2.ZWCAD" & vbNewLine & "3.PROGECAD" & vbNewLine & "4.NO", "CAD Selector", 1)
+mode = InputBox("½Ğ¿ï¾Ü¨Ï¥ÎªÌªºCADª©¥»" & vbNewLine & "1.AutoCAD" & vbNewLine & "2.ZWCAD" & vbNewLine & "3.PROGECAD" & vbNewLine & "4.NO", "CAD Selector", 1)
 
-Sheets("ç¸½è¡¨").optAutoCAD = True
+Sheets("Á`ªí").optAutoCAD = True
 
 If mode = 1 Then
-    Sheets("ç¸½è¡¨").optAutoCAD = True
+    Sheets("Á`ªí").optAutoCAD = True
 ElseIf mode = 2 Then
-    Sheets("ç¸½è¡¨").optZWCAD = True
+    Sheets("Á`ªí").optZWCAD = True
 ElseIf mode = 3 Then
-    Sheets("ç¸½è¡¨").optICAD = True
+    Sheets("Á`ªí").optICAD = True
 Else
-    Sheets("ç¸½è¡¨").optNOVBA = True
+    Sheets("Á`ªí").optNOVBA = True
 End If
 
 '=======FetchURL=========
 
 Dim o As New clsFetchURL
 
-'Call o.Login(o.getMacAddress)
+Call o.Login(o.getMacAddress)
 
-'Call login_YLIA
+Call login_YLIA
 
-MsgBox "è¨­è¨ˆè€…ï¼šæ—å®—æ¼¢(Hank Lin) @2021" & vbNewLine & _
+MsgBox "³]­pªÌ¡GªL©vº~(Hank Lin) @2021" & vbNewLine & _
        "" & vbNewLine & _
-        "æ‰‹æ©Ÿï¼š0912052274" & vbNewLine & _
-       "é›»å­éƒµä»¶ï¼šapple84026113@gmail.com" & vbNewLine & _
-       "éƒ¨è½æ ¼ï¼šhttps://hankvba.blogspot.com/"
+        "¤â¾÷¡G0912052274" & vbNewLine & _
+       "¹q¤l¶l¥ó¡Gapple84026113@gmail.com" & vbNewLine & _
+       "³¡¸¨®æ¡Ghttps://hankvba.blogspot.com/"
 On Error Resume Next
-Application.StatusBar = "è¨­è¨ˆè€…:æ—å®—æ¼¢(Hank Lin) @2021"
+Application.StatusBar = "³]­pªÌ:ªL©vº~(Hank Lin) @2021"
 On Error GoTo 0
 
 'If Now() > #12/31/2023# Then
 '
-'MsgBox "ä½¿ç”¨æœŸé™å·²åˆ°2023å¹´12æœˆ31æ—¥ï¼Œè«‹é‡æ–°é€£çµ¡è¨­è¨ˆè€…!"
+'MsgBox "¨Ï¥Î´Á­­¤w¨ì2023¦~12¤ë31¤é¡A½Ğ­«·s³sµ¸³]­pªÌ!"
 '
 'With ThisWorkbook
 '    .Saved = True
@@ -121,7 +130,7 @@ Function GetIPAddress()
             IPAddress = IPConfig.IPAddress
             If Not IsNull(IPAddress) Then
                 If InStr(1, IPConfig.Description, "WAN (", vbTextCompare) Then
-                   MsgBox "ç¶²é  IP = " + IPAddress(0)
+                   MsgBox "ºô­¶ IP = " + IPAddress(0)
                 End If
                 strIPAddress = strIPAddress & Join(IPAddress, "/") + vbCrLf
             End If
@@ -147,3 +156,4 @@ Function CharToUnicode(strChar As String)
     CharToUnicode = lngUnicode
     
 End Function
+
