@@ -28,8 +28,34 @@ For Each VBComp In VBProj.VBComponents
     If myExtension = ".doccls" And CountFileLines(full_path) = 9 Then Kill full_path
     
 Next VBComp
+    
+End Sub
 
-'MsgBox "請注意: doccls副檔名目前還無法進行匯入，需要手動處理!", vbInformation
+Sub DeleteCodes()
+
+'Type: 1=bas,2=cls,3=frm
+
+Set VBProj = ThisWorkbook.VBProject
+For Each VBComp In VBProj.VBComponents
+    
+    Select Case VBComp.Type
+    
+        Case 1: myExtension = ".bas"
+        Case 2: myExtension = ".cls"
+        Case 3: myExtension = ".frm"
+        
+        Case 100: myExtension = ".doccls"
+    
+    End Select
+    
+    If VBComp.Type <> 100 And VBComp.Name <> "GIT" Then
+
+        VBProj.VBComponents.Remove (VBComp)
+        
+    End If
+    
+Next VBComp
+
     
 End Sub
 
@@ -41,7 +67,6 @@ For Each filePath In coll_path
 
     Filename = mid(filePath, InStrRev(filePath, "\") + 1)
     fileExtension = mid(Filename, InStrRev(Filename, ".") + 1)
-    'fileName_short = mid(Filename, 1, InStrRev(Filename, ".") - 1)
     
     If fileExtension = "frm" Or fileExtension = "bas" Or fileExtension = "cls" Then
         Call ImportCode(filePath, Filename)
@@ -56,14 +81,16 @@ Sub ImportCode(ByVal filePath As String, ByVal Filename As String)
 extension = mid(Filename, InStrRev(Filename, ".") + 1)
 CodeName = mid(Filename, 1, InStrRev(Filename, ".") - 1)
 
+If CodeName = "GIT" Then Exit Sub
+
 Set VBProj = ThisWorkbook.VBProject
 
-If checkIfCodeExist(CodeName) = True Then
-
-    Set VBComp = VBProj.VBComponents(CodeName)
-    VBProj.VBComponents.Remove (VBComp)
-
-End If
+'If checkIfCodeExist(CodeName) = True Then
+'
+'    Set vbcomp = VBProj.VBComponents(CodeName)
+'    VBProj.VBComponents.Remove (vbcomp)
+'
+'End If
 
 VBProj.VBComponents.Import (filePath)
 
@@ -101,7 +128,7 @@ End Function
 
 Function getSavedFolder()
 
-    Set fldr = Application.FileDialog(4) 'msoFileDialogFolderPicker
+    Set fldr = Application.FileDialog(4)
     
     With fldr
         .Title = "Select a Folder"
@@ -113,7 +140,7 @@ getSavedFolder = FolderName
 
 End Function
 
-Function checkIfCodeExist(ByVal checkName As String)
+Function checkIfCodeExist(ByVal checkName As String) 'useless
 
 Set VBProj = ThisWorkbook.VBProject
 Set VBComps = VBProj.VBComponents
