@@ -17,6 +17,7 @@ Attribute VB_Exposed = False
 
 
 
+
 Private Sub cmdOK_Click()
 
 Dim Lsec As New clsLongitudinal

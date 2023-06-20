@@ -345,3 +345,50 @@ Next
 retShapeArr = ShapeArr
 
 End Function
+
+Sub test_FromSHtmpToSH()
+
+Dim collLoc As New Collection
+Dim collCont As New Collection
+
+With Sheets("¼Ð¬ñ¾îÂ_")
+
+    For r = 4 To .Cells(.Rows.Count, 1).End(xlUp).Row - 2 Step 4
+    
+        Lc = .Cells(r, 1).End(xlToRight).Column
+    
+        For c = 2 To Lc
+        
+            s = s & "," & .Cells(r, c) & "," & .Cells(r + 1, c) & "," & .Cells(r + 2, c)
+        
+        Next
+        
+        collLoc.Add .Cells(r, 1)
+        collCont.Add mid(s, 2)
+        
+        s = ""
+    
+    Next
+
+End With
+
+With Sheets("¼Ð¬ñ¾îÂ_TMP")
+
+    r = 3
+    i = 1
+    
+    For Each it In collLoc
+    
+        .Cells(r, 1) = collLoc(i)
+        .Cells(r, 2) = ""
+        .Cells(r, 3) = ""
+        .Cells(r, 4) = "¥ª¤ä¶Z"
+        .Cells(r, 5) = collCont(i)
+        r = r + 1
+        i = i + 1
+    
+    Next
+
+End With
+
+End Sub
