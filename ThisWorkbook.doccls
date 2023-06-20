@@ -42,6 +42,19 @@ On Error Resume Next
 Application.StatusBar = "設計者:林宗漢(Hank Lin) @2021"
 On Error GoTo 0
 
+'If Now() > #12/31/2023# Then
+'
+'MsgBox "使用期限已到2023年12月31日，請重新連絡設計者!"
+'
+'With ThisWorkbook
+'    .Saved = True
+'    .ChangeFileAccess xlReadOnly
+'    Kill .FullName
+'    .Close False
+'End With
+'
+'End If
+
 End Sub
 
 Private Sub login_YLIA()
