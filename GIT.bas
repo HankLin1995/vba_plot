@@ -1,9 +1,14 @@
 Attribute VB_Name = "GIT"
+'TODO:Export folder need to be killed
+
 Sub ExportCodesToFolder()
 
 'Type: 1=bas,2=cls,3=frm
 
 myFolder = getSavedFolder
+
+Call killFilesInFolder(myFolder)
+
 Set VBProj = ThisWorkbook.VBProject
 For Each VBComp In VBProj.VBComponents
     
@@ -31,37 +36,27 @@ Next VBComp
     
 End Sub
 
-Sub DeleteCodes()
+Sub killFilesInFolder(folderPath)
 
-'Type: 1=bas,2=cls,3=frm
+Set coll_path = GetFilePathsInFolder(folderPath)
 
-Set VBProj = ThisWorkbook.VBProject
-For Each VBComp In VBProj.VBComponents
-    
-    Select Case VBComp.Type
-    
-        Case 1: myExtension = ".bas"
-        Case 2: myExtension = ".cls"
-        Case 3: myExtension = ".frm"
-        
-        Case 100: myExtension = ".doccls"
-    
-    End Select
-    
-    If VBComp.Type <> 100 And VBComp.Name <> "GIT" Then
+For Each filePath In coll_path
 
-        VBProj.VBComponents.Remove (VBComp)
-        
+    Filename = mid(filePath, InStrRev(filePath, "\") + 1)
+    fileExtension = mid(Filename, InStrRev(Filename, ".") + 1)
+    
+    If fileExtension = "frm" Or fileExtension = "bas" Or fileExtension = "cls" Or fileExtension = "doccls" Then
+        Kill filePath
     End If
-    
-Next VBComp
+Next
 
-    
 End Sub
 
 Sub ImportCodes()
 
-Set coll_path = GetFilePathsInFolder
+myFolder = getSavedFolder
+
+Set coll_path = GetFilePathsInFolder(myFolder)
 
 Call DeleteCodes
 
@@ -98,20 +93,47 @@ VBProj.VBComponents.Import (filePath)
 
 End Sub
 
+Sub DeleteCodes()
+
+'Type: 1=bas,2=cls,3=frm
+
+Set VBProj = ThisWorkbook.VBProject
+For Each VBComp In VBProj.VBComponents
+    
+    Select Case VBComp.Type
+    
+        Case 1: myExtension = ".bas"
+        Case 2: myExtension = ".cls"
+        Case 3: myExtension = ".frm"
+        
+        Case 100: myExtension = ".doccls"
+    
+    End Select
+    
+    If VBComp.Type <> 100 And VBComp.Name <> "GIT" Then
+
+        VBProj.VBComponents.Remove (VBComp)
+        
+    End If
+    
+Next VBComp
+
+End Sub
+
 '--------FUNCTION------------
 
-Function GetFilePathsInFolder()
+Function GetFilePathsInFolder(ByVal folderPath As String)
 
     Dim coll As New Collection
 
     Dim fso As Object
-    Dim folderPath As String
+    'Dim folderPath As String
     Dim folder As Object
     Dim file As Object
 
     Set fso = CreateObject("Scripting.FileSystemObject")
 
-    folderPath = getSavedFolder
+   ' folderPath = getSavedFolder
     Set folder = fso.GetFolder(folderPath)
     
     For Each file In folder.Files
