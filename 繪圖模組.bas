@@ -412,7 +412,7 @@ Dim FilterType(0) As Integer
 Dim FilterData(0) As Variant
 Dim MyACAD As New clsACAD
 
-Set ACAD = MyACAD.acaddoc '.ActiveDocument
+Set ACAD = MyACAD.acadDoc '.ActiveDocument
 
 With ACAD
 

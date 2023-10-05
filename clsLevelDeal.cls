@@ -193,8 +193,8 @@ ec = .Cells(dr, 1)
 sh = .Cells(ur, c)
 eH = .Cells(dr, c)
 
-l = ec - sc
-interpolate = (eH * (nc - sc) + sh * (ec - nc)) / l
+L = ec - sc
+interpolate = (eH * (nc - sc) + sh * (ec - nc)) / L
 
 End With
 

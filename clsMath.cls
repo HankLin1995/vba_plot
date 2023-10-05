@@ -82,11 +82,11 @@ For i = 0 To (UBound(arr) - coor) Step coor
     Y2 = arr(i + coor + 1)
     
     Xavg = (X1 + X2) / 2: Yavg = (Y1 + Y2) / 2
-    l = Sqr((X1 - X2) ^ 2 + (Y1 - Y2) ^ 2)
+    L = Sqr((X1 - X2) ^ 2 + (Y1 - Y2) ^ 2)
     
     Xc.Add Xavg
     Yc.Add Yavg
-    Lc.Add l
+    Lc.Add L
 
 Next
 
@@ -94,11 +94,11 @@ For j = 1 To Xc.Count
 
     Xavg = Xc.Item(j)
     Yavg = Yc.Item(j)
-    l = Lc.Item(j)
+    L = Lc.Item(j)
     
-    Xw = Xw + Xavg * l
-    Yw = Yw + Yavg * l
-    LW = LW + l
+    Xw = Xw + Xavg * L
+    Yw = Yw + Yavg * L
+    LW = LW + L
     
 Next
 

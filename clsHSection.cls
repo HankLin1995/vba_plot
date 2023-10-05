@@ -37,7 +37,7 @@ Private Sub Class_Initialize()
 
 
 Set sht = Sheets("¾îÂ_­±")
-Set ACAD = MyACAD.acaddoc 'acadapp.ActiveDocument
+Set ACAD = MyACAD.acadDoc 'acadapp.ActiveDocument
 Set mo = ACAD.ModelSpace
 
 Xscale = 1

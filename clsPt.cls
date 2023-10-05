@@ -132,9 +132,14 @@ arr = Array(PT_NUM, Z, CD)
 
 Set ptObj = CAD.InsertBlock(txtpt, "Point", txtheight, arr) ' coll_attr)
 
-ptObj.Layer = "平面圖-點"
+Call CAD.setLayer(ptObj, "平面圖-點")
+
+'ptObj.Layer = "平面圖-點"
 
 End Sub
+
+
+
 
 Sub AppendData(Optional ByVal r As Double)
 

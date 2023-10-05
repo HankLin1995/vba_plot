@@ -1,0 +1,58 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "¤u§@ªí18"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
+Sub t3()
+
+With ActiveSheet
+
+lr = .Cells(1, 1).End(xlDown).Row
+Lc = .Cells(1, 1).End(xlToRight).Column
+
+    For r = 2 To lr
+    
+        For c = 2 To Lc
+        
+            If .Cells(r, c) = 0 Then
+            
+                ur = .Cells(r, c).End(xlUp).Row
+                dr = .Cells(r, c).End(xlDown).Row
+                
+                If Not ur = 1 And .Cells(dr, c) <> 0 Then
+                
+                s = interpolate(r, ur, dr, c)
+                .Cells(r, c) = Round(s, 2)
+                
+                End If
+                
+            End If
+        
+        Next
+    
+    Next
+
+End With
+
+End Sub
+
+Function interpolate(ByVal r, ByVal ur, ByVal dr, ByVal c)
+
+With ActiveSheet
+
+nc = .Cells(r, 1)
+sc = .Cells(ur, 1)
+ec = .Cells(dr, 1)
+sh = .Cells(ur, c)
+eH = .Cells(dr, c)
+
+L = ec - sc
+interpolate = (eH * (nc - sc) + sh * (ec - nc)) / L
+
+End With
+
+End Function

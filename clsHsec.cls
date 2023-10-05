@@ -300,7 +300,7 @@ End Sub
 Sub DrawHeightBar() 'plot the y-height-bar，橫斷面高程表可以再做精緻些
 
 'CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("橫斷面-高程條")
-CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("BAR")
+CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers("BAR")
 
 Dim spt(2) As Double
 Dim ept(2) As Double
@@ -345,7 +345,7 @@ ept(1) = BaseY + step / 2 * 1000
 
 Set lineObj = CAD.AddLine(spt, ept)
 
-CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("0")
+CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers("0")
 
 Call DrawXBar
 Call ExportBorderToCL
@@ -355,7 +355,7 @@ End Sub
 Private Sub DrawXBar() 'plot the y-height-bar，橫斷面高程表可以再做精緻些
 
 'CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("橫斷面-高程條")
-CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("BAR")
+CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers("BAR")
 
 Dim spt(2) As Double
 Dim ept(2) As Double
@@ -401,7 +401,7 @@ ept(1) = spt(1)
 
 Set lineObj = CAD.AddLine(spt, ept)
 
-CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("0")
+CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers("0")
 
 End Sub
 

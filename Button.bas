@@ -597,12 +597,74 @@ End If
 
 End Sub
 
+'Sub cmdImportTXT_useless()
+'
+''Dim obj As New clsPTs_Table 'clsPlanMap
+'
+''obj.ImportTXT
+'
+'End Sub
+
 Sub cmdImportTXT()
 
-Dim obj As New clsPTs_Table 'clsPlanMap
+    Dim filePath As String
+    Dim FileContent As String
+    Dim Lines() As String
+    Dim Line As String
+    Dim myFunc As New clsMyfunction
+    
+    Set sht = Sheets("總表")
+    
+    Call myFunc.ClearData(sht, 2, 1, 5)
+    
+    'FilePath = "G:\我的雲端硬碟\CADVBA\平面圖課程資料\20190328.asc"
+    
+    If filePath = "" Then filePath = Application.GetOpenFilename
 
-obj.ImportTXT
+    Open filePath For Input As #1
+    Do Until EOF(1)
+        Line Input #1, Line
+        FileContent = FileContent & Line & vbCrLf
+    Loop
+    Close #1
 
+    Lines = Split(FileContent, vbCrLf)
+    
+    prompt = Lines(0)
+    
+    mode = InputBox(prompt & vbNewLine & vbNewLine & "請選擇模式:" & vbNewLine & "1--P,E,N,Z,CD" & vbNewLine & "2--P,N,E,Z,CD", , "1")
+    
+    If mode = "1" Then
+    
+        For Each L In Lines
+        
+            tmp = Split(L, ",")
+            
+            If L <> "" Then Call myFunc.AppendData(sht, tmp)
+            
+        Next
+    
+    Else
+
+        For Each L In Lines
+        
+            tmp = Split(L, ",")
+            
+            If UBound(tmp) > 2 Then
+            
+                tmp_s = tmp(1)
+                tmp(1) = tmp(2)
+                tmp(2) = tmp_s
+                
+                Call myFunc.AppendData(sht, tmp)
+            
+            End If
+
+
+        Next
+    
+    End If
+    
 End Sub
 
 Sub cmdExportCSV()

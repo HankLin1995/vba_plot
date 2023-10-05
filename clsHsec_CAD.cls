@@ -78,7 +78,7 @@ myFunc.MergeSort_array ar
 
 For i = LBound(ar) To UBound(ar)
 
-    collEGs.Add CAD.acaddoc.HandleToObject(ar(i, 1))
+    collEGs.Add CAD.acadDoc.HandleToObject(ar(i, 1))
 
 Next
 
@@ -102,12 +102,12 @@ End Function
 
 Sub getPLs()
 
-CAD.acaddoc.Layers("平面圖-橫斷樁").LayerOn = False
-CAD.acaddoc.Layers("平面圖-橫斷樁L").LayerOn = False
-CAD.acaddoc.Layers("平面圖-點").LayerOn = False
-CAD.acaddoc.Layers("平面圖-點名").LayerOn = False
-CAD.acaddoc.Layers("平面圖-點高程").LayerOn = False
-CAD.acaddoc.Layers("平面圖-點編碼").LayerOn = False
+CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = False
+CAD.acadDoc.Layers("平面圖-橫斷樁L").LayerOn = False
+CAD.acadDoc.Layers("平面圖-點").LayerOn = False
+CAD.acadDoc.Layers("平面圖-點名").LayerOn = False
+CAD.acadDoc.Layers("平面圖-點高程").LayerOn = False
+CAD.acadDoc.Layers("平面圖-點編碼").LayerOn = False
 
 Set PLs = CAD.CreateSSET("SS2")
 
@@ -120,12 +120,12 @@ For Each PL In PLs
 
 Next
 
-CAD.acaddoc.Layers("平面圖-橫斷樁").LayerOn = True
-CAD.acaddoc.Layers("平面圖-橫斷樁L").LayerOn = True
-CAD.acaddoc.Layers("平面圖-點").LayerOn = True
-CAD.acaddoc.Layers("平面圖-點名").LayerOn = True
-CAD.acaddoc.Layers("平面圖-點高程").LayerOn = True
-CAD.acaddoc.Layers("平面圖-點編碼").LayerOn = True
+CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = True
+CAD.acadDoc.Layers("平面圖-橫斷樁L").LayerOn = True
+CAD.acadDoc.Layers("平面圖-點").LayerOn = True
+CAD.acadDoc.Layers("平面圖-點名").LayerOn = True
+CAD.acadDoc.Layers("平面圖-點高程").LayerOn = True
+CAD.acadDoc.Layers("平面圖-點編碼").LayerOn = True
 
 End Sub
 
@@ -225,7 +225,7 @@ Sub openLayers(Optional openlayer As String = "")
 
 If openlayer = "" Then
 
-    For Each ly In CAD.acaddoc.Layers
+    For Each ly In CAD.acadDoc.Layers
         ly.LayerOn = True
     Next
 
@@ -233,7 +233,7 @@ Else
 
     open_layers = Split(openlayer, ",")
 
-        For Each ly In CAD.acaddoc.Layers
+        For Each ly In CAD.acadDoc.Layers
         
             ly.LayerOn = False
             

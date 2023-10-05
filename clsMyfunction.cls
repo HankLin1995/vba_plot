@@ -46,6 +46,17 @@ End With
 
 End Sub
 
+Sub AppendData(ByVal sht As Object, ByVal arr)
+
+With sht
+
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+    .Cells(lr + 1, 1).Resize(1, UBound(arr) + 1) = arr
+
+End With
+
+End Sub
+
 Public Function BubbleSort_array(arr As Variant, Optional ByVal method As String = "Ascending")
 
 'https://officeguide.cc/excel-vba-array-bubble-sort-function-tutorial-examples/

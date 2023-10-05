@@ -47,7 +47,7 @@ Else
     Set PL = CAD.AddPolyLine(vertices)
 End If
 
-CAD.acaddoc.Layers.Add (PLname)
+CAD.acadDoc.Layers.Add (PLname)
 
 PL.Layer = PLname
 

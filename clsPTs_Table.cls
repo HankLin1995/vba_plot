@@ -131,12 +131,12 @@ For r = 2 To lr
     Y = .Cells(r, 3)
 
     fi = math.getAz(X0, Y0, X, Y)
-    l = Sqr((X - X0) ^ 2 + (Y - Y0) ^ 2)
+    L = Sqr((X - X0) ^ 2 + (Y - Y0) ^ 2)
     
     thida = fi + ptang
 
-    dx = l * math.degcos(thida)
-    dy = l * math.degsin(thida)
+    dx = L * math.degcos(thida)
+    dy = L * math.degsin(thida)
 
     newx = X0 + dx
     newy = Y0 + dy
@@ -293,49 +293,49 @@ End With
 
 End Sub
 
-Sub ImportTXT() '整理TXT
-
-mode = InputBox("從機器下載後的排序順序" & vbCrLf & "1.P,E,N,Z,CD" & vbCrLf & "2.P,N,E,Z,CD")
-
-With sht
-
-    lr = .Cells(Rows.Count, 1).End(xlUp).Row
-    
-    For r = 2 To lr
-    
-        mydata = .Cells(r, 1)
-        
-        tmp = Split(mydata, ",")
-        
-        For i = LBound(tmp) To UBound(tmp)
-        
-            Select Case i
-            
-            Case 0: c = 1
-            Case 1
-            
-                c = 2
-                If mode = 2 Then c = 3
-                
-            Case 2
-            
-                c = 3
-                If mode = 2 Then c = 2
-                
-            Case 3: c = 4
-            Case 4: c = 5
-            
-            End Select
-        
-            .Cells(r, c) = tmp(i)
-        
-        Next
-    
-    Next
-
-End With
-
-End Sub
+'Sub ImportTXT() '整理TXT
+'
+'mode = InputBox("從機器下載後的排序順序" & vbCrLf & "1.P,E,N,Z,CD" & vbCrLf & "2.P,N,E,Z,CD")
+'
+'With sht
+'
+'    lr = .Cells(Rows.Count, 1).End(xlUp).Row
+'
+'    For r = 2 To lr
+'
+'        mydata = .Cells(r, 1)
+'
+'        tmp = Split(mydata, ",")
+'
+'        For i = LBound(tmp) To UBound(tmp)
+'
+'            Select Case i
+'
+'            Case 0: c = 1
+'            Case 1
+'
+'                c = 2
+'                If mode = 2 Then c = 3
+'
+'            Case 2
+'
+'                c = 3
+'                If mode = 2 Then c = 2
+'
+'            Case 3: c = 4
+'            Case 4: c = 5
+'
+'            End Select
+'
+'            .Cells(r, c) = tmp(i)
+'
+'        Next
+'
+'    Next
+'
+'End With
+'
+'End Sub
 
 Sub test_GetOldPTs()
 

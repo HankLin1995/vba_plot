@@ -37,6 +37,8 @@ If IsLT = True Then MsgBox "LT版本不支援喔!": Exit Sub
 
 txtheight = Val(InputBox("請輸入文字高度(單位:mm)", , 0.5))
 
+Call checkBlockExist("Point")
+
 With sht
 
 lr = .Cells(1, 1).End(xlDown).Row
@@ -389,7 +391,7 @@ With sht
         
         Else
         
-            Set lay = CAD.acaddoc.Layers.Add("平面圖-" & CD)
+            Set lay = CAD.acadDoc.Layers.Add("平面圖-" & CD)
             
             ReDim vertices(ptnum * 3 - 1)
         
@@ -451,7 +453,7 @@ With sht
         If layercolor = "" Then layercolor = 7
 
         If Feature = "R" Or Feature = "" Then
-            CAD.acaddoc.Layers("平面圖-" & CD).Color = layercolor
+            CAD.acadDoc.Layers("平面圖-" & CD).Color = layercolor
         End If
         
     Next

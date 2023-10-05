@@ -38,11 +38,11 @@ r = 3
 Xsc = returnScale(0, Xco, Xnum)
 Ysc = returnScale(1, Yco, Ynum)
 
-CAD.acaddoc.Utility.prompt "請框選欲查詢的樁號"
+CAD.acadDoc.Utility.prompt "請框選欲查詢的樁號"
 
 Set ssetX = CAD.CreateSSET("SSETX")
 
-CAD.acaddoc.Utility.prompt "請框選欲查詢的縱斷面高程線"
+CAD.acadDoc.Utility.prompt "請框選欲查詢的縱斷面高程線"
 
 Set ssetPL = CAD.CreateSSET("SSETPL")
 
@@ -58,10 +58,10 @@ For Each PL In ssetPL
         
         If UBound(ret) = 2 Then
         
-            l = (ret(0) - Xco) * 2500 / 1000 + Xnum
+            L = (ret(0) - Xco) * 2500 / 1000 + Xnum
             H = (ret(1) - Yco) * Ysc / 1000 + Ynum
             
-            colltmp.Add l & "," & H
+            colltmp.Add L & "," & H
         
         End If
         

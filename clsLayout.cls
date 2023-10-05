@@ -36,7 +36,7 @@ Private Sub Class_Initialize()
 
 Dim layout As Object
 
-Set ACAD = MyACAD.acaddoc
+Set ACAD = MyACAD.acadDoc
 
 Set ps = ACAD.PaperSpace
 Set mo = ACAD.ModelSpace
@@ -610,8 +610,8 @@ For Each Item In sset
     
         RecArr = MyACAD.tranIPoints(Item.coordinates)
     
-        l = (RecArr(6) - RecArr(0))
-        collScale.Add dx / l
+        L = (RecArr(6) - RecArr(0))
+        collScale.Add dx / L
         
     End If
 

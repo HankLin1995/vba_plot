@@ -137,7 +137,7 @@ End Sub
 
 Sub DrawCrossLine(ByVal X0 As Double, ByVal Y0 As Double, ByVal fi As Double, ByVal myloc As String)
 
-CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("平面圖-橫斷樁")
+CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers("平面圖-橫斷樁")
 
 Dim spt(2) As Double
 Dim ept(2) As Double
@@ -447,7 +447,7 @@ For Each it In mySSET
 
 Next
 
-CAD.acaddoc.Utility.prompt "已經清除完成!" & vbNewLine
+CAD.acadDoc.Utility.prompt "已經清除完成!" & vbNewLine
 
 End Sub
 

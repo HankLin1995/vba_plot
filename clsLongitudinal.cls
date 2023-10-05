@@ -316,7 +316,7 @@ For i = 1 To UBound(AllHeightData())
 
     HeightName = AllHeightData(i, 0)
     
-    MyACAD.acaddoc.Layers.Add (HeightName)
+    MyACAD.acadDoc.Layers.Add (HeightName)
     
     'IntelliCAD.ActiveDocument.layers.Add (HeightName)
 
@@ -602,7 +602,7 @@ Dim collHeight As New Collection
 X1 = viewpoint(0) + startInterval
 Y1 = viewpoint(1)
 
-With MyACAD.acaddoc
+With MyACAD.acadDoc
 
     For i = 1 To UBound(AllHeightData)
     
@@ -694,7 +694,7 @@ Dim Arc As Object
 With MyACAD
 
 '.acaddoc.ActiveLayer = .acaddoc.Layers("縱斷面-施工資訊")
-.acaddoc.ActiveLayer = .acaddoc.Layers("L-INFO")
+.acadDoc.ActiveLayer = .acadDoc.Layers("L-INFO")
 
 X1 = viewpoint(0) + startInterval
 Xbar = X1

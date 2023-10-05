@@ -213,11 +213,11 @@ Sub test_layers()
 
 Dim CAD As New clsACAD
 
-Set o = CAD.acaddoc.Layers
+Set o = CAD.acadDoc.Layers
 
-For Each l In o
+For Each L In o
 
-    Debug.Print l.Name
+    Debug.Print L.Name
 
 Next
 

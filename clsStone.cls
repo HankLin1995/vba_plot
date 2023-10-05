@@ -103,7 +103,7 @@ For i = 0 To UBound(arr)
                 CA = CA + .Cells(r_sec - 1, 5)
                 BA = BA + .Cells(r_sec - 1, 8)
                 RA = RA + .Cells(r_sec - 1, 11)
-                l = l + .Cells(r_sec - 1, 2)
+                L = L + .Cells(r_sec - 1, 2)
             
             End If
 
@@ -116,7 +116,7 @@ For i = 0 To UBound(arr)
     Next
     
     .Cells(arr(i) + r + 2, 1) = "小計"
-    .Cells(arr(i) + r + 3, 2) = l & " M"
+    .Cells(arr(i) + r + 3, 2) = L & " M"
     .Cells(arr(i) + r + 3 - 2, 4) = "小計"
     .Cells(arr(i) + r + 3, 5 - 1) = CA & " M3"
     .Cells(arr(i) + r + 3 - 2, 7) = "小計"
@@ -155,7 +155,7 @@ For j = 0 To i
 Next
 
 .Cells(arr(i) + 42 + 2, 1) = "合計"
-.Cells(arr(i) + 42 + 3, 2) = l & " M"
+.Cells(arr(i) + 42 + 3, 2) = L & " M"
 .Cells(arr(i) + 42 + 3 - 2, 4) = "合計"
 .Cells(arr(i) + 42 + 3, 5 - 1) = CA & " M3"
 .Cells(arr(i) + 42 + 3 - 2, 7) = "合計"

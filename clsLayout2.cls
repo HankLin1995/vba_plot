@@ -87,7 +87,7 @@ End Sub
 
 Sub SortLayout(ByVal IsAutoCAD As Boolean)
 
-Set ACAD = CAD.acaddoc
+Set ACAD = CAD.acadDoc
 
 Dim layout As Object 'AcadLayout
 ReDim LayoutArr(1 To lr - sr + 1, 1 To 2)
@@ -145,7 +145,7 @@ End Sub
 
 Sub ClearVport()
 
-Set ACAD = CAD.acaddoc
+Set ACAD = CAD.acadDoc
 
 For Each layout In ACAD.Layouts
 
@@ -174,7 +174,7 @@ End Sub
 
 Sub FillInLayout()
 
-Set ACAD = CAD.acaddoc
+Set ACAD = CAD.acadDoc
 
 With shtLayout
 

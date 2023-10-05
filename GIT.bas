@@ -184,7 +184,7 @@ End Function
 
 Function CountFileLines(ByVal filePath)
 
-    Dim fileContent As String
+    Dim FileContent As String
     Dim fileNumber As Integer
     Dim lineCount As Long
     
@@ -194,7 +194,7 @@ Function CountFileLines(ByVal filePath)
     
     ' Read the file content line by line and count the lines
     Do Until EOF(fileNumber)
-        Line Input #fileNumber, fileContent
+        Line Input #fileNumber, FileContent
         lineCount = lineCount + 1
     Loop
     

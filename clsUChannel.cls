@@ -36,7 +36,7 @@ Private Sub Class_Initialize()
 
 Set sht = Sheets("橫斷面")
 Set shtChannelType = Sheets("渠道型式表")
-Set ACAD = CAD.acaddoc
+Set ACAD = CAD.acadDoc
 Set mo = ACAD.ModelSpace
 
 End Sub

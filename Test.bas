@@ -1,11 +1,51 @@
 Attribute VB_Name = "Test"
 
 
+Sub checkBlockExist(blockName)
+
+'需要先將D:\CADWord\BLOCK資料夾中放置"Point.dwg"
+
+Dim CAD As New clsACAD
+
+blockFound = False
+    
+For Each Block In CAD.acadDoc.Blocks
+
+    If Block.Name = blockName Then
+        blockFound = True
+        Exit For
+    End If
+    
+Next Block
+
+If Not blockFound Then
+    
+    MsgBox "未找到圖面具有【" & blockName & "】圖塊!嘗試創立中...", vbInformation
+    
+    insertPoint = Array(0, 0, 0)
+    blockFilePath = "D:\CADWork\BLOCK\" & blockName & ".dwg"
+
+    If Dir(blockFilePath) = "" Then
+    
+        blockFilePath = Application.GetSaveAsFilename(, , , "請選擇" & blockName & ".dwg")
+        If blockFilePath = False Then MsgBox "缺少圖塊【" & blockName & ".dwg】...無法運行!", vbCritical: End
+    
+    End If
+    
+    On Error GoTo ERRORHANDLE '即便有錯誤但還是會生出Point?
+    Call CAD.acadDoc.ModelSpace.InsertBlock(insertPoint, blockFilePath, 1, 1, 1, 0)
+    
+End If
+
+ERRORHANDLE:
+
+End Sub
+
 Sub test_setLayout()
 
 Dim CAD As New clsACAD
 
-Set layout = CAD.acaddoc.Layouts
+Set layout = CAD.acadDoc.Layouts
 
 End Sub
 
@@ -208,7 +248,7 @@ With Sheets("SET")
     
         'Debug.Print .Cells(r, "L")
     
-        Set lay = CAD.acaddoc.Layers.Add(.Cells(r, 9))
+        Set lay = CAD.acadDoc.Layers.Add(.Cells(r, 9))
 
         Select Case .Cells(r, 9 + 2)
 

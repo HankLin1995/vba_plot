@@ -35,7 +35,7 @@ Private DQ As Double
 Private manning As Double
 Private d As Double
 Private a As Double
-Private P As Double
+Private p As Double
 Private R_open As Double
 Private n_open As Double
 Private V As Double
@@ -209,8 +209,8 @@ Sub Calc(ByVal myrow)
 For d = 0.1 To H Step 0.01
 
     a = (B + B + m * d + N * d) * d / 2
-    P = B + (1 + m ^ 2) ^ 0.5 * d + (1 + N ^ 2) ^ 0.5 * d
-    R_open = a / P
+    p = B + (1 + m ^ 2) ^ 0.5 * d + (1 + N ^ 2) ^ 0.5 * d
+    R_open = a / p
     V = 1 / n_open * R_open ^ (2 / 3) * s ^ 0.5
     q = V * a
     
@@ -227,7 +227,7 @@ Sub KeyInData(ByVal r As Double)
 With Sheets("¼Ð·ÇÂ_­±")
 
     .Cells(r, "M") = Round(a, 3)
-    .Cells(r, "N") = Round(P, 3)
+    .Cells(r, "N") = Round(p, 3)
     .Cells(r, "O") = Round(R_open, 3)
     .Cells(r, "P") = Round(R_open ^ (2 / 3), 3)
     .Cells(r, "Q") = Round(s ^ 0.5, 3)

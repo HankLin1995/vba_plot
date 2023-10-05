@@ -27,7 +27,7 @@ Private Sub Class_Initialize()
 Set SHsht = Sheets("¼Ð¬ñ¾îÂ_")
 Set Hsht = Sheets("¾îÂ_­±")
 
-Set ACAD = MyACAD.acaddoc   'acadapp.ActiveDocument
+Set ACAD = MyACAD.acadDoc   'acadapp.ActiveDocument
 Set mo = ACAD.ModelSpace
 
 ACAD.Layers.Add "PT_Point"

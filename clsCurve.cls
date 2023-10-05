@@ -33,7 +33,7 @@ Private CLobj As New clsCL
 
 Sub GetCurve()
 
-CAD.acaddoc.Utility.prompt "請選擇單曲線!"
+CAD.acadDoc.Utility.prompt "請選擇單曲線!"
 
 Set sset = CAD.CreateSSET(, "8", "Curve")
 
@@ -81,7 +81,7 @@ fi = math.getAz(Xec, Yec, Xc, Yc)
 mypt(0) = Xec
 mypt(1) = Yec
 
-CAD.acaddoc.Utility.prompt "建議放樣間距為20M=" & Int(ls / 20) & "個點位"
+CAD.acadDoc.Utility.prompt "建議放樣間距為20M=" & Int(ls / 20) & "個點位"
 step = CAD.GetString("請輸入要擬合的單曲線點位個數:")
 
 For j = 0 To step
@@ -152,7 +152,7 @@ End Function
 
 Sub GetCL()
 
-CAD.acaddoc.Utility.prompt "請選擇中心線!"
+CAD.acadDoc.Utility.prompt "請選擇中心線!"
 
 Set sset = CAD.CreateSSET("CL")
 
@@ -362,7 +362,7 @@ If deltaI < 0 Then
     bE = thida2 + math.deg2rad(90)
     fe = thida + math.deg2rad(90)
     
-    Set ar = CAD.acaddoc.ModelSpace.AddArc(cpt, Radius, bE, fe)
+    Set ar = CAD.acadDoc.ModelSpace.AddArc(cpt, Radius, bE, fe)
     
     cpt(0) = Xec
     cpt(1) = Yec
@@ -372,7 +372,7 @@ Else
     bE = thida2 + math.deg2rad(270)
     fe = thida + math.deg2rad(270)
     
-    Set ar = CAD.acaddoc.ModelSpace.AddArc(cpt, Radius, fe, bE)
+    Set ar = CAD.acadDoc.ModelSpace.AddArc(cpt, Radius, fe, bE)
     
     cpt(0) = Xbc
     cpt(1) = Ybc
@@ -423,7 +423,7 @@ End Sub
 
 Private Sub Class_Initialize()
 
-Set lay = CAD.acaddoc.Layers.Add("Curve")
+Set lay = CAD.acadDoc.Layers.Add("Curve")
 
 lay.Color = 6
 

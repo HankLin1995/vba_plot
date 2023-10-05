@@ -11,7 +11,7 @@ Private mo As Object
 Private pa As Object
 Private math As New clsMath
 Private myFunc As New clsMyfunction
-Public acaddoc As Object
+Public acadDoc As Object
 Public CADVer As String
 
 Private Sub Class_Initialize()
@@ -41,15 +41,15 @@ Private Sub CADInit(ByVal strCAD As String)
 
 On Error Resume Next
 
-Set acadapp = GetObject(, strCAD) '查看安裝
-If Err <> 0 Then Set acadapp = CreateObject(strCAD)
-acadapp.Visible = True
+Set acadApp = GetObject(, strCAD) '查看安裝
+If Err <> 0 Then Set acadApp = CreateObject(strCAD)
+acadApp.Visible = True
 
 On Error GoTo 0
 
-Set mo = acadapp.ActiveDocument.ModelSpace
-Set pa = acadapp.ActiveDocument.PaperSpace
-Set acaddoc = acadapp.ActiveDocument
+Set mo = acadApp.ActiveDocument.ModelSpace
+Set pa = acadApp.ActiveDocument.PaperSpace
+Set acadDoc = acadApp.ActiveDocument
 
 End Sub
 
@@ -416,14 +416,14 @@ If CADVer = "ICAD" Then
     GetPoint = tranIPoint(o)
 
 Else
-    GetPoint = acaddoc.Utility.GetPoint(, prompt)
+    GetPoint = acadDoc.Utility.GetPoint(, prompt)
 End If
 
 End Function
 
 Function GetString(ByVal prompt As String)
 
-GetString = acaddoc.Utility.GetString(False, prompt & vbNewLine)
+GetString = acadDoc.Utility.GetString(False, prompt & vbNewLine)
 
 End Function
 
@@ -506,7 +506,7 @@ Sub Createfontstyle() '這部分可以用DWT方法解決(先建立好水利會模板)
 Dim txtStyle 'As AcadTextStyle
 Dim txtStyles ' As AcadTextStyles
 
-Set txtStyles = acaddoc.textstyles
+Set txtStyles = acadDoc.textstyles
 '
 'For Each txtStyle In txtStyles
 '
@@ -524,7 +524,7 @@ Set txtStyles = acaddoc.textstyles
 '
 'End If
 
-acaddoc.activetextstyle = acaddoc.textstyles("YLIA")
+acadDoc.activetextstyle = acadDoc.textstyles("YLIA")
 
 Exit Sub
 
@@ -532,7 +532,7 @@ ERRORHANDLE:
 
 txtStyle.fontFile = "C:\Windows\fonts\arial.ttf"
 
-acaddoc.activetextstyle = acaddoc.textstyles("YLIA")
+acadDoc.activetextstyle = acadDoc.textstyles("YLIA")
 
 End Sub
 
@@ -608,9 +608,9 @@ Function CreateSSET(Optional ByVal sname As String = "SS1", Optional ByVal ftype
 Dim FilterType() As Integer
 Dim FilterData() As Variant
 
-On Error Resume Next: acaddoc.SelectionSets(sname).Delete: On Error GoTo 0
+On Error Resume Next: acadDoc.SelectionSets(sname).Delete: On Error GoTo 0
 
-Set sset = acaddoc.SelectionSets.Add(sname)
+Set sset = acadDoc.SelectionSets.Add(sname)
 
 If ftypetmp = "" Then
 
@@ -660,7 +660,7 @@ End Sub
 
 Sub BeGroup(ByVal entArr As Variant)
 
-Set GO = acaddoc.groups.Add(acaddoc.groups.Count + 1)
+Set GO = acadDoc.groups.Add(acadDoc.groups.Count + 1)
 
 If TypeName(entArr) = "Collection" Then
 
@@ -862,23 +862,23 @@ X2 = retEnd(0): Y2 = retEnd(1)
 
 Set lineObj = AddLine(retStart, retEnd)
 
-l = Sqr((X1 - X2) * (X1 - X2) + (Y1 - Y2) * (Y1 - Y2))
+L = Sqr((X1 - X2) * (X1 - X2) + (Y1 - Y2) * (Y1 - Y2))
 
-r = l / 10
+r = L / 10
 
 Xm = (X1 + X2) / 2: Ym = (Y1 + Y2) / 2
 
 vertices(0) = Xm: vertices(1) = Ym
-vertices(3) = Xm - l / 20: vertices(4) = Ym + l / 10
-vertices(6) = Xm + l / 20: vertices(7) = Ym + l / 10
+vertices(3) = Xm - L / 20: vertices(4) = Ym + L / 10
+vertices(6) = Xm + L / 20: vertices(7) = Ym + L / 10
 vertices(9) = Xm: vertices(10) = Ym
 
 Set plineobj = AddPolyLine(vertices)
 
 For i = 1 To 4
 
-    spt(0) = Xm - r / 5 * (5 - i) * (5 - i): spt(1) = Ym - l / 20 * i
-    ept(0) = Xm + r / 5 * (5 - i) * (5 - i): ept(1) = Ym - l / 20 * i
+    spt(0) = Xm - r / 5 * (5 - i) * (5 - i): spt(1) = Ym - L / 20 * i
+    ept(0) = Xm + r / 5 * (5 - i) * (5 - i): ept(1) = Ym - L / 20 * i
     
     Set lineObj = AddLine(spt, ept)
     
@@ -892,7 +892,7 @@ Dim pt_origin(2) As Double
 
 pt_origin(0) = 0: pt_origin(1) = 0: pt_origin(2) = 0 '圖塊插入基準點
 
-Set myBlock = acaddoc.Blocks(block_name)
+Set myBlock = acadDoc.Blocks(block_name)
 myBlock.Origin = tranPoint(pt_origin)
 
 Set InsertBlock = mo.InsertBlock(tranPoint(pt_insert), block_name, myscale, myscale, myscale, 0)
@@ -983,7 +983,7 @@ End Function
 
 Sub setLayer(ByVal obj, ByVal layername As String)
 
-acaddoc.Layers.Add layername
+acadDoc.Layers.Add layername
 
 obj.Layer = layername
 
