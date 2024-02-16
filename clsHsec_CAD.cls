@@ -27,7 +27,7 @@ Private myFunc As New clsMyfunction
 Private collEGs As New Collection
 Private collPLs As New Collection
 
-Const CL_CROSSLINE_LAYER_NAME = "平面圖-橫斷樁L"
+Const CL_CROSSLINE_LAYER_NAME = "CL_CROSS"
 
 Private Sub Class_Initialize()
 
@@ -92,7 +92,15 @@ With sht_CL 'Sheets("中心線")
 
 Set rng = .Columns(2).Find(spt(0))
 
+If rng Is Nothing Then
+
+r = getNearlyLoc(spt(0)) 'add
+
+Else
+
 r = rng.Row
+
+End If
 
 getLocFromEG = .Cells(r, 1)
 
@@ -100,10 +108,28 @@ End With
 
 End Function
 
+Private Function getNearlyLoc(ByVal pt_x As Double) 'add
+
+With sht_CL
+
+    lr = .Cells(.Rows.Count, 2).End(xlUp).Row
+    
+    For r = 3 To lr
+    
+        diff = .Cells(r, 2) - pt_x
+        
+        If diff < 1 Then getNearlyLoc = r: Exit Function
+    
+    Next
+
+End With
+
+End Function
+
 Sub getPLs()
 
-CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = False
-CAD.acadDoc.Layers("平面圖-橫斷樁L").LayerOn = False
+'CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = False
+CAD.acadDoc.Layers(CL_CROSSLINE_LAYER_NAME).LayerOn = False
 CAD.acadDoc.Layers("平面圖-點").LayerOn = False
 CAD.acadDoc.Layers("平面圖-點名").LayerOn = False
 CAD.acadDoc.Layers("平面圖-點高程").LayerOn = False
@@ -120,8 +146,9 @@ For Each PL In PLs
 
 Next
 
-CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = True
-CAD.acadDoc.Layers("平面圖-橫斷樁L").LayerOn = True
+'CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = True
+'CAD.acadDoc.Layers("平面圖-橫斷樁L").LayerOn = True
+CAD.acadDoc.Layers(CL_CROSSLINE_LAYER_NAME).LayerOn = True
 CAD.acadDoc.Layers("平面圖-點").LayerOn = True
 CAD.acadDoc.Layers("平面圖-點名").LayerOn = True
 CAD.acadDoc.Layers("平面圖-點高程").LayerOn = True
