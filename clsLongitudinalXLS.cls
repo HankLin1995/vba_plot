@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private CAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 Private collXLine As New Collection
 Private shtLsec As Object
 Private shtHsec As Object
@@ -170,9 +170,9 @@ With shtHsec
     
     For rTarget = 2 To .Range("F" & Rows.Count).End(xlUp).Row 'ªì©l¤Æ
         
-        HeightName = .Range("H" & rTarget)
+        heightname = .Range("H" & rTarget)
         TargetCol = .Range("G" & rTarget)
-        shtLsec.Cells(1, TargetCol) = HeightName
+        shtLsec.Cells(1, TargetCol) = heightname
         
     Next
 
@@ -191,7 +191,7 @@ With shtHsec
         sr = collBlank.Item(i) + 1
         er = collBlank.Item(i + 1) - 1
         
-        where = math.TranLoc(.Cells(sr, 4))
+        where = Math.TranLoc(.Cells(sr, 4))
         shtLsec.Cells(r, 1) = where
         
         For rr = sr To er

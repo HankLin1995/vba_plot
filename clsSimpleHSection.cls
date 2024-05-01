@@ -15,7 +15,7 @@ Private collLoc As New Collection
 Private ACAD As Object
 Private mo As Object
 Private MyACAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 Private txtheight As Double
 
 Public myUnit As String
@@ -231,7 +231,7 @@ For Each it In sset
         spt = it.startpoint
         ept = it.endpoint
         
-        fi = math.getAz(spt(0), spt(1), ept(0), ept(1))
+        fi = Math.getAz(spt(0), spt(1), ept(0), ept(1))
     
         For i = LBound(arr, 1) To UBound(arr, 1)
         

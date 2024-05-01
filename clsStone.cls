@@ -13,7 +13,7 @@ Private BA As Double
 Private FA As Double
 
 Private CAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 Private myFunc As New clsMyfunction
 Private shtCL As Object
 Private shtReport As Object
@@ -73,9 +73,10 @@ For i = 0 To UBound(arr)
         Else
 
             .Cells(arr(i) + r, 1) = FinalArray(j, 1)
+            
             .Cells(arr(i) + r, 3) = FinalArray(j, 5)
             .Cells(arr(i) + r, 6) = FinalArray(j, 6)
-            .Cells(arr(i) + r, 9) = FinalArray(j, 7)
+            '.Cells(arr(i) + r, 9) = FinalArray(j, 7)
             
             IsSteped = False
 
@@ -84,8 +85,8 @@ For i = 0 To UBound(arr)
         r_fir = arr(i) + r - 2
         r_sec = arr(i) + r
 
-        FirLoc = math.TranLoc(.Cells(r_fir, 1))
-        SecLoc = math.TranLoc(.Cells(r_sec, 1))
+        FirLoc = Math.TranLoc(.Cells(r_fir, 1))
+        SecLoc = Math.TranLoc(.Cells(r_sec, 1))
         
         If r_fir <> arr(i) - 2 Then
 
@@ -194,7 +195,7 @@ ReDim BasicArray(1 To lr, 1 To 7) '有放比較多欄位
         If .Cells(r, 1) = "" Then Exit For
     
         BasicArray(j, 1) = .Cells(r, 1)
-        BasicArray(j, 2) = math.TranLoc(.Cells(r, 1))
+        BasicArray(j, 2) = Math.TranLoc(.Cells(r, 1))
         BasicArray(j, 3) = .Cells(r, 1).Font.ColorIndex
         BasicArray(j, 4) = .Cells(r, 2 + 2)
         BasicArray(j, 5) = Round(.Cells(r, 3 + 2), 2)
@@ -231,7 +232,9 @@ shtReport.Copy wb.Sheets(1)
 
 Application.DisplayAlerts = False
 
-For Each mysht In Sheets
+For Each mysht In wb.Sheets
+
+ActiveWindow.DisplayZeros = False
 
 i = i + 1
 
@@ -247,7 +250,7 @@ End Sub
 
 Sub DrawCABA_Main() '將橫斷面說明的CL、CA、BA刪除後重整
 
-Set sset = CAD.CreateSSET("Title", "8", "橫斷面-橫斷面說明")
+Set sset = CAD.CreateSSET("Title", "8", "TITLE")
 
 For Each it In sset
         
@@ -263,7 +266,7 @@ For Each it In sset
         myAttr(1).TextString = tmp(0)
         myAttr(2).TextString = "挖方=" & Round(tmp(1), 2) & " m2"
         myAttr(3).TextString = "填方=" & Round(tmp(2), 2) & " m2"
-        myAttr(4).TextString = "CLSM=" & Round(tmp(3), 2) & " m2"
+        'myAttr(4).TextString = "CLSM=" & Round(tmp(3), 2) & " m2"
         
     
     End If

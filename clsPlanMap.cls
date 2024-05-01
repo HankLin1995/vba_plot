@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 
 Private sht As Object
 Private CAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 Private pt As New clsPt 'new object 20210713
 Private myFunc As New clsMyfunction 'new object 20210713
 
@@ -41,7 +41,7 @@ Call checkBlockExist("Point")
 
 With sht
 
-lr = .Cells(1, 1).End(xlDown).Row
+lr = .Cells(.Rows.Count, 1).End(xlUp).Row
 
     For r = 2 To lr
     
@@ -54,7 +54,9 @@ lr = .Cells(1, 1).End(xlDown).Row
 
 End With
 
-'ACAD.SendCommand "zoom" & vbCr & "e" & vbCr
+MsgBox "點物件創立完成!", vbInformation
+
+CAD.acadDoc.SendCommand "zoom" & vbCr & "e" & vbCr
 
 End Sub
 
@@ -299,7 +301,7 @@ Dim coll As New Collection
 
 With sht
 
-    lr = .Cells(1, 1).End(xlDown).Row
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
     
     For r = 2 To lr
     

@@ -125,8 +125,9 @@ For i = 0 To UBound(BasicParameterArr)
 Next
 
 Set MainCONC = CAD.AddPolyLine(vertices)
+Call CAD.setLayer(MainCONC, "CON")
 
-MainCONC.Layer = "CON" ' "橫斷面-結構線"
+'MainCONC.Layer = "CON" ' "橫斷面-結構線"
 
 Ldpt(0) = CenterPoint(0) - BW / 2 - LT - OW
 Ldpt(1) = CenterPoint(1) - BT - BBT
@@ -166,7 +167,8 @@ vertices(6) = MaxX + 300 + 30
 vertices(7) = MinY + 100
 
 Set DL = CAD.AddLWPolyLine(vertices)
-DL.Layer = "CAL" ' "橫斷面-挖方線"
+Call CAD.setLayer(DL, "CAL")
+'DL.Layer = "CAL" ' "橫斷面-挖方線"
 
 retpt = myFunc.SortPTArray(CAD.IntersectWith(DL, EG, 1, IsIntersect))
 
@@ -190,6 +192,7 @@ vertices(7) = retpt(UBound(retpt, 1), 1) '- 3 + 2)
 DL.Delete
 
 Set DL2 = CAD.AddLWPolyLine(vertices)
+
 DL2.Layer = "CAL" '"橫斷面-挖方線"
 
 '============匯入挖方面積==================

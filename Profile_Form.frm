@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Profile_Form 
    Caption         =   "縱斷面繪圖參數"
-   ClientHeight    =   5295
+   ClientHeight    =   7005
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   7095
+   ClientWidth     =   10830
    OleObjectBlob   =   "Profile_Form.frx":0000
    StartUpPosition =   1  '所屬視窗中央
 End
@@ -16,13 +16,13 @@ Attribute VB_Exposed = False
 
 
 
-
-
-
 Private Sub cmdOK_Click()
 
 Dim Lsec As New clsLongitudinal
 Dim ret(2) As Double
+
+Me.Label10.Visible = True
+'Me.Label10.Caption = "請移動至CAD點擊任意一點!"
 
 With Lsec 'unit mm
 
@@ -39,7 +39,15 @@ With Lsec 'unit mm
     .sc = Me.tbosc ' Val(InputBox("請輸入開始欄位", , 2)) '開始欄位
     .Lc = Me.tboec 'Val(InputBox("請輸入結束欄位", , Cells(2, 1).End(xlToRight).Column))
     
-    Call ChangeLoc(2, .Lc)
+    If Me.OptionButton1.Value = True Then
+    .LocType = "A"
+    Else
+    .LocType = "B"
+    End If
+
+    .IsShowHeightTxt = Me.CheckBox1
+    
+    'Call ChangeLoc(2, .Lc)
     
     .ReadData
     .GetScale '(ret) '附帶有基準點的sub
@@ -53,7 +61,13 @@ With Lsec 'unit mm
 
 End With
 
+Me.Label10.Visible = False
+
 Unload Me
+
+End Sub
+
+Private Sub OptionButton1_Click()
 
 End Sub
 

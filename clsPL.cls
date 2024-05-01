@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private CAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 Private pt As New clsPt
 Private myFunc As New clsMyfunction
 
@@ -104,7 +104,7 @@ For j = (node1 - 1) * co To (node2 - 1) * co + 1 - co Step co '¬O§_­n§í¨î«e«á¨âÂ
     X1 = pts(j): Y1 = pts(j + 1)
     X2 = pts(j + co): Y2 = pts(j + 1 + co)
     
-    partLen = partLen + math.getLengthCO(X1, Y1, X2, Y2)
+    partLen = partLen + Math.getLengthCO(X1, Y1, X2, Y2)
 
 Next
 
@@ -126,7 +126,7 @@ For i = (node1 - 1) * co To (node2 - 1) * co + 1 - co Step co
     X1 = pts(i): Y1 = pts(i + 1)
     X2 = pts(i + co): Y2 = pts(i + 1 + co)
     
-    dLen = math.getLengthCO(X1, Y1, X2, Y2)
+    dLen = Math.getLengthCO(X1, Y1, X2, Y2)
     s1 = s1 + dLen
     s2 = partLen - s1
 
@@ -174,7 +174,7 @@ For i = 0 To UBound(pts) - co Step co
     X1 = pts(i): Y1 = pts(i + 1)
     X2 = pts(i + co): Y2 = pts(i + 1 + co)
     
-    dLen = math.getLengthCO(X1, Y1, X2, Y2)
+    dLen = Math.getLengthCO(X1, Y1, X2, Y2)
     s1 = s1 + dLen
     s2 = totalLen - s1
     
@@ -199,22 +199,22 @@ For i = 0 To UBound(pts) - co Step co
 
         '---------------------------------------------------------------
 
-    beforeX = Round(arr(i), 4)
-    beforeY = Round(arr(i + 1), 4)
+    beforeX = Format(Round(arr(i), 4), "0.000")
+    beforeY = Format(Round(arr(i + 1), 4), "0.000")
     
     If co = 3 Then beforeH = arr(i + 2) '½u¹ïÀ³ÂI¸ê®ÆÂX¥R¼Ò²Õ
     If IsFromTable = True Then beforeH = getZfromCollPointTable(beforeX & ":" & beforeY, CollPointTable)
     
-    afterX = Round(arr(i + co), 4)
-    afterY = Round(arr(i + co + 1), 4)
+    afterX = Format(Round(arr(i + co), 4), "0.000")
+    afterY = Format(Round(arr(i + co + 1), 4), "0.000")
     
     If co = 3 Then afterH = arr(i + co + 2) '½u¹ïÀ³ÂI¸ê®ÆÂX¥R¼Ò²Õ
     If IsFromTable = True Then afterH = getZfromCollPointTable(afterX & ":" & afterY, CollPointTable)
     
     '------------------------------------------------------------------
     
-    If math.IsMiddle(beforeX, beforeY, midX, midY, afterX, afterY) Then '20200701·s¼Wfun
-    
+    If Math.IsMiddle(beforeX, beforeY, midX, midY, afterX, afterY) Then '20200701·s¼Wfun
+
         s1 = Sqr((midX - beforeX) ^ 2 + (midY - beforeY) ^ 2)
         s2 = Sqr((midX - afterX) ^ 2 + (midY - afterY) ^ 2)
         
@@ -388,3 +388,19 @@ d = resultArray(1, 1)
 
 End Sub
 
+Function addPointByPL()   '20221227
+
+Dim ptObj As New clsPt
+
+For j = 0 To UBound(pts) Step co
+
+    X = Round(pts(j), 3)
+    Y = Round(pts(j + 1), 3)
+
+    Call ptObj.getPropertiesByUser("©ñ¼Ë", X, Y, X, Y)
+    Call ptObj.CreatePoint(0.5)
+    Call ptObj.AppendData
+
+Next
+
+End Function

@@ -366,6 +366,12 @@ xrange = Val(InputBox("請輸入各樁號X偏移距離", , 10000))
 yrange = Val(InputBox("請輸入各樁號Y偏移距離", , 2000))
 times = Val(InputBox("請輸入切換個數", , 3))
 
+Call checkBlockExist("LeftGL")
+Call checkBlockExist("RightGL")
+Call checkBlockExist("H_TITLE")
+
+
+
 Set collENV = obj.getENVcoll  '取得環境資訊
 
 BaseHeightPoint = CAD.GetPoint("Select the BaseHeightPoint")
@@ -562,6 +568,8 @@ Dim obj As New clsPlanMap
 
 obj.DrawLine (1)
 
+MsgBox "連線完成!", vbInformation
+
 End Sub
 
 
@@ -620,6 +628,8 @@ Sub cmdImportTXT()
     'FilePath = "G:\我的雲端硬碟\CADVBA\平面圖課程資料\20190328.asc"
     
     If filePath = "" Then filePath = Application.GetOpenFilename
+    
+    If filePath = "False" Then MsgBox "未選擇檔案!", vbCritical: End
 
     Open filePath For Input As #1
     Do Until EOF(1)

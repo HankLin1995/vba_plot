@@ -321,5 +321,164 @@ Next
 
 End Sub
 
+Sub test_CLPointByUser()
 
+'With Me
+
+'Me.Hide
+
+Dim obj As New clsCL
+
+'If Not .chkXLS Then obj.nowLoc = .txtStartLoc
+obj.nowLoc = InputBox("請輸入起點樁號", , 0) ' .txtStartLoc
+obj.w = 1 ' .txtWdith
+'obj.IsLeftShow = .chkLeftShow
+'obj.IsRightShow = .chkRightShow
+'obj.NeedBox = .chkNeedBox
+'obj.NeedDir = .chkNeedDir
+'obj.NeedReverse = .chkReverse
+obj.PaperScale = 1000 '.tboPaperScale
+obj.WIDTH_COE = 1.2 '.tboWidthCoe
+
+obj.getCenterLine
+
+'If Not .chkXLS Then
+    obj.getLoc
+'Else
+   ' obj.getLocXLS
+'End If
+
+obj.CrossLine_Main_Output
+'obj.setDataByUser
+
+'End With
+
+'Unload Me
+
+End Sub
+
+Sub test_getPoint()
+
+Dim CAD As New clsACAD
+Dim pt As New clsPt
+
+Set sset = CAD.CreateSSET("SS1")
+
+For Each it In sset
+
+    Call pt.getPropertiesByBlock_Tien(it) ', PT_NUM, E, N)
+    
+    pt.AppendData
+
+Next
+
+End Sub
+
+Sub test_getAreas()
+
+Dim CAD As New clsACAD
+Dim myMath As New clsMath
+
+Set sset = CAD.CreateSSET
+
+
+For Each it In sset
+    
+    j = j + 1
+
+    o = myMath.getCentroid(it)
+    
+    'Set pointObject = CAD.AddPoint(o)
+    
+    X = o(0)
+    Y = o(1)
+    
+    Dim txtpt(2) As Double
+    
+    txtpt(0) = X
+    txtpt(1) = Y - 200
+    
+    BoundaryArea = Round(it.area / 10000, 2) '& "m2"
+
+    Set txtobject = CAD.AddText(BoundaryArea, txtpt, 200, 2)
+    Call CAD.AddTextBox(txtobject)
+    
+    txtpt(0) = X
+    txtpt(1) = Y + 200
+    
+    Call CAD.AddText("A" & j, txtpt, 200, 2)
+
+Next
+
+End Sub
+
+Sub test_getHandles()
+
+Dim CAD As New clsACAD
+Dim myMath As New clsMath
+
+Set sset = CAD.CreateSSET
+
+For Each it In sset
+    
+    j = j + 1
+
+    o = myMath.getCentroid(it)
+    
+    oo = it.Handle
+    
+    Dim txtpt(2) As Double
+    
+    Set txtobject = CAD.AddText(oo, o, 200, 2)
+    
+    With Sheets("AREA")
+    
+        lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+        
+        .Cells(lr + 1, 1) = "'" & oo
+        .Cells(lr + 1, 2) = o(0)
+        .Cells(lr + 1, 3) = o(1)
+    
+    End With
+    
+Next
+
+End Sub
+
+Sub test_AboutHandle()
+
+Dim CAD As New clsACAD
+
+Dim Math As New clsMath
+
+With Sheets("AREA")
+
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+
+    For r = 2 To lr
+
+        handleInput = .Cells(r, 1)
+        
+        Set acadDoc = CAD.acadDoc
+        Set objByHandle = acadDoc.HandleToObject(handleInput)
+        
+        o = Math.getCentroid(objByHandle)
+        
+        BoundaryArea = Round(objByHandle.area / 10000, 2) '& "m2"
+        
+        .Cells(r, 5) = BoundaryArea
+
+        'Dim txtpt(2) As Double
+        
+        'txtpt(0) = o(0)
+        'txtpt(1) = o(1) - 200
+        
+        'Set txtobj = CAD.AddText(r - 1, txtpt, 200, 2)
+
+    Next
+
+End With
+
+
+End Sub
 

@@ -112,7 +112,7 @@ With ActiveSheet
         
     Next
     
-    Call ChangeLoc(sr, Lc)
+    'Call ChangeLoc(sr, Lc)
 
 End With
 

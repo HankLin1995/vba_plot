@@ -11,7 +11,7 @@ Private EGVertices
 Private EG As Object
 Private sht_EG As Object
 Private CAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 Private myFunc As New clsMyfunction
 
 Private BaseX As Double
@@ -31,6 +31,7 @@ Private rightENVcode As String
 Private MidHeight As Double
 Private step As Integer
 Private loc As String
+
 
 'TODO:
 '1.繪製地界線
@@ -77,7 +78,7 @@ Call getEGVertices(sr, er)
 
 If Is3D = False Then
 
-    a = math.getCentroid(EGVertices, 2)
+    a = Math.getCentroid(EGVertices, 2)
     distanceY = Round((a(1) - BaseY) / 1000)
     
     If distanceY <> 0 Then
@@ -187,8 +188,9 @@ End Function
 Sub plotHsec()
 
 Set EG = CAD.AddLWPolyLine(EGVertices)
+Call CAD.setLayer(EG, "GL")
 
-EG.Layer = "GL" '"橫斷面-原地面線"
+'EG.Layer = "GL" '"橫斷面-原地面線"
 
 End Sub
 
@@ -271,7 +273,8 @@ LeftGroundPt(0) = EGVertices(0)
 LeftGroundPt(1) = EGVertices(1)
 
 Set o = CAD.InsertBlock(LeftGroundPt, "LeftGL", PaperScale, Array(collENV(leftENVcode)))
-o.Layer = "GL" ' "橫斷面-原地面線"
+Call CAD.setLayer(o, "GL")
+'o.Layer = "GL" ' "橫斷面-原地面線"
 
 RightGroundPt(0) = EGVertices(UBound(EGVertices) - 1)
 RightGroundPt(1) = EGVertices(UBound(EGVertices))
@@ -292,14 +295,16 @@ hcpt(1) = BaseY + step / 2 * 1000 + 1500 * (PaperScale / 100)
 coll.Add loc
 
 Set o = CAD.InsertBlock(hcpt, "H_TITLE", PaperScale, coll)
+Call CAD.setLayer(o, "TITLE")
 
-o.Layer = "TITLE"
+'o.Layer = "TITLE"
 
 End Sub
 
 Sub DrawHeightBar() 'plot the y-height-bar，橫斷面高程表可以再做精緻些
 
 'CAD.acaddoc.ActiveLayer = CAD.acaddoc.Layers("橫斷面-高程條")
+CAD.acadDoc.Layers.Add ("BAR")
 CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers("BAR")
 
 Dim spt(2) As Double

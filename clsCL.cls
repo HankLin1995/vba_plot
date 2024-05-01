@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private CAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 
 Private arrLen() As Variant
 Private arrLoc() As Variant
@@ -34,6 +34,7 @@ Public BLnext As Double '流心連線距離
 'Const WIDTH_COE = 1.5
 Const NUM_DIGIT = 1
 Const CL_LAYER_NAME = "CL"
+Const CL_CROSS_LAYER_NAME = "CL_CROSS"
 
 Private Sub Class_Initialize()
 
@@ -45,6 +46,8 @@ Sub CrossLine_Main()
 
 Dim nextL As Double
 Dim storeLen As Double
+
+CAD.acadDoc.Layers.Add CL_CROSS_LAYER_NAME
 
 IsFirst = True
 
@@ -61,7 +64,7 @@ For i = 0 To UBound(pts) - co Step co
 
     ptLen = Sqr((X1 - X0) ^ 2 + (Y1 - Y0) ^ 2)  '兩點距
 
-    fi = math.getAz(X0, Y0, X1, Y1)
+    fi = Math.getAz(X0, Y0, X1, Y1)
     
     If IsFirst Then
     
@@ -85,8 +88,8 @@ For i = 0 To UBound(pts) - co Step co
 
         If k <= UBound(arrLen) Then nextL = arrLen(k) '下一單距
         
-        dx = math.degcos(fi) * (moveL)
-        dy = math.degsin(fi) * (moveL)
+        dx = Math.degcos(fi) * (moveL)
+        dy = Math.degsin(fi) * (moveL)
         
         Xnow = X0 + dx: Ynow = Y0 + dy
         X0 = Xnow: Y0 = Ynow
@@ -111,6 +114,87 @@ errhandle:
 
 End Sub
 
+Sub CrossLine_Main_Output()
+
+Dim nextL As Double
+Dim storeLen As Double
+Dim pt As New clsPt
+
+CAD.acadDoc.Layers.Add CL_CROSS_LAYER_NAME
+
+IsFirst = True
+
+'Call getCenterLine(pts, CO, totalLen)
+'Call getLoc(totalLen)
+
+k = 1
+nextL = arrLen(0)
+
+For i = 0 To UBound(pts) - co Step co
+
+    X0 = pts(i): Y0 = pts(i + 1)
+    X1 = pts(i + co): Y1 = pts(i + 1 + co)
+
+    ptLen = Sqr((X1 - X0) ^ 2 + (Y1 - Y0) ^ 2)  '兩點距
+
+    fi = Math.getAz(X0, Y0, X1, Y1)
+    
+    If IsFirst Then
+    
+        myloc = nowLoc 'Format(nowLoc + 0, "0K+000")
+        Call pt.getPropertiesByUser(X0, X0, Y0, Y0, Format(myloc, "0K+000"))
+        Call pt.CreatePoint(0.5)
+        Call pt.AppendData
+        'Call DrawCrossLine(X0, Y0, fi, myloc)
+        IsFirst = False
+    
+    End If
+    
+    sumLen = sumLen + ptLen
+
+    If sumLen <= nextL Then storeLen = storeLen + ptLen '不夠用先存起來
+
+    Do Until sumLen <= nextL
+        
+        moveL = nextL
+        
+        If storeLen <> 0 Then moveL = nextL - storeLen: storeLen = 0
+
+        sumLen = sumLen - nextL
+
+        If k <= UBound(arrLen) Then nextL = arrLen(k) '下一單距
+        
+        dx = Math.degcos(fi) * (moveL)
+        dy = Math.degsin(fi) * (moveL)
+        
+        Xnow = X0 + dx: Ynow = Y0 + dy
+        X0 = Xnow: Y0 = Ynow
+        On Error GoTo errhandle
+        myloc = arrLoc(k - 1)
+        
+        'Call DrawCrossLine(X0, Y0, fi, myloc)
+        Call pt.getPropertiesByUser(X0, X0, Y0, Y0, Format(myloc, "0K+000"))
+        Call pt.CreatePoint(0.5)
+        Call pt.AppendData
+        k = k + 1
+    
+    Loop
+
+    storeLen = sumLen
+    
+Next
+
+myloc = nowLoc + totalLen ' Format(nowLoc + totalLen, "0K+000")
+
+'Call DrawCrossLine(X1, Y1, fi, myloc)
+Call pt.getPropertiesByUser(X1, X1, Y1, Y1, Format(myloc, "0K+000"))
+Call pt.CreatePoint(0.5)
+Call pt.AppendData
+
+errhandle:
+
+End Sub
+
 Sub getCenterLine() 'pts, CO, totalLen)
 
 If CL Is Nothing Then
@@ -118,8 +202,9 @@ If CL Is Nothing Then
     Set sset = CAD.CreateSSET("CL")
     Set CL = sset(0)
     If NeedReverse Then Set CL = CAD.ReverseLine(CL)
+    Call CAD.setLayer(CL, CL_LAYER_NAME)
     
-    CL.Layer = CL_LAYER_NAME '"平面圖-中心線" '"中心樁"
+'    CL.Layer = CL_LAYER_NAME '"平面圖-中心線" '"中心樁"
     
 End If
 
@@ -137,20 +222,24 @@ End Sub
 
 Sub DrawCrossLine(ByVal X0 As Double, ByVal Y0 As Double, ByVal fi As Double, ByVal myloc As String)
 
-CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers("平面圖-橫斷樁")
+CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers(CL_CROSS_LAYER_NAME) '("平面圖-橫斷樁")
 
 Dim spt(2) As Double
 Dim ept(2) As Double
 
-spt(0) = X0 + math.degcos(fi - 90) * w
-spt(1) = Y0 + math.degsin(fi - 90) * w
+spt(0) = X0 + Math.degcos(fi - 90) * w
+spt(1) = Y0 + Math.degsin(fi - 90) * w
 
-ept(0) = X0 + math.degcos(fi + 90) * w
-ept(1) = Y0 + math.degsin(fi + 90) * w
+ept(0) = X0 + Math.degcos(fi + 90) * w
+ept(1) = Y0 + Math.degsin(fi + 90) * w
 
 Set lineObj = CAD.AddLine(spt, ept)
 
-lineObj.Layer = "平面圖-橫斷樁L" '20210901
+'Call CAD.setLayer(lineObj, CL_CROSS_LAYER_NAME)
+
+'Call CAD.setLayer(lineObj, "平面圖-橫斷樁L")
+
+'lineObj.Layer = "平面圖-橫斷樁L" '20210901
 
 If NeedDir Then '方向旗標
 
@@ -190,7 +279,7 @@ vertices(6) = X + dx: vertices(7) = Y
 vertices(9) = X: vertices(10) = Y
 
 Set Tri = CAD.AddPolyLine(vertices)
-Tri.rotate CAD.tranPoint(dpt), math.deg2rad(-fi)
+Tri.rotate CAD.tranPoint(dpt), Math.deg2rad(-fi)
 
 Call CAD.Hatch(Tri, 1, "SOLID")
 
@@ -200,8 +289,8 @@ Private Sub DrawCrossLoc(X0, Y0, myloc, fi, ByVal rotangle As Double, ByVal alig
 
 Dim tept(2) As Double
 
-tept(0) = Round(X0 + math.degcos(fi + rotangle) * w * WIDTH_COE, 3)
-tept(1) = Round(Y0 + math.degsin(fi + rotangle) * w * WIDTH_COE, 3)
+tept(0) = Round(X0 + Math.degcos(fi + rotangle) * w * WIDTH_COE, 3)
+tept(1) = Round(Y0 + Math.degsin(fi + rotangle) * w * WIDTH_COE, 3)
 
 myloc = Format(myloc, "0K+000.0") '20210709
 
@@ -209,8 +298,8 @@ myloc = Format(myloc, "0K+000.0") '20210709
 Set txtobj = CAD.AddMixText(myloc, tept, 4 * PaperScale / 1000, alignmode)
 If NeedBox Then Set boxobj = CAD.AddTextBox(txtobj)
 
-txtobj.rotate CAD.tranPoint(tept), math.deg2rad(-fi)
-If NeedBox Then boxobj.rotate CAD.tranPoint(tept), math.deg2rad(-fi)
+txtobj.rotate CAD.tranPoint(tept), Math.deg2rad(-fi)
+If NeedBox Then boxobj.rotate CAD.tranPoint(tept), Math.deg2rad(-fi)
 
 End Sub
 
@@ -272,7 +361,7 @@ With sht
 
     For r = 3 To lr - 1
 
-        collmyloc.Add math.TranLoc(.Cells(r, 1))
+        collmyloc.Add Math.TranLoc(.Cells(r, 1))
 
     Next
 
@@ -316,7 +405,7 @@ For i = 0 To UBound(pts) - co Step co
 
     ptLen = Sqr((X1 - X0) ^ 2 + (Y1 - Y0) ^ 2)  '兩點距
 
-    fi = math.getAz(X0, Y0, X1, Y1)
+    fi = Math.getAz(X0, Y0, X1, Y1)
     
     If IsFirst Then
     
@@ -338,8 +427,8 @@ For i = 0 To UBound(pts) - co Step co
 
         'If k <= UBound(arrLen) Then nextL = arrLen(k) '下一單距
         
-        dx = math.degcos(fi) * (moveL)
-        dy = math.degsin(fi) * (moveL)
+        dx = Math.degcos(fi) * (moveL)
+        dy = Math.degsin(fi) * (moveL)
         
         Xnow = X0 + dx: Ynow = Y0 + dy
         X0 = Xnow: Y0 = Ynow
@@ -368,11 +457,11 @@ Dim spt(2) As Double
 Dim ept(2) As Double
 Dim midpt(2) As Double
 
-spt(0) = X + math.degcos(fi + 90) * 100
-spt(1) = Y + math.degsin(fi + 90) * 100
+spt(0) = X + Math.degcos(fi + 90) * 100
+spt(1) = Y + Math.degsin(fi + 90) * 100
 
-ept(0) = X + math.degcos(fi - 90) * 100
-ept(1) = Y + math.degsin(fi - 90) * 100
+ept(0) = X + Math.degcos(fi - 90) * 100
+ept(1) = Y + Math.degsin(fi - 90) * 100
 
 Set CrossLine = CAD.AddLine(spt, ept)
 
@@ -431,15 +520,17 @@ Next
 
 Set CL = CAD.AddPolyLine(vertices)
 
-CL.Layer = "CL" ' "平面圖-中心線"
+Call CAD.setLayer(CL, "CL")
+
+'CL.Layer = "CL" ' "平面圖-中心線"
 
 End Sub
 
 Sub ClearStation()
 
-MsgBox "請移動至CAD框選要刪除的樁號圖層"
+MsgBox "請移動至CAD框選要刪除的樁號圖層", vbInformation
 
-Set mySSET = CAD.CreateSSET(, "8", "平面圖-橫斷樁")
+Set mySSET = CAD.CreateSSET(, "8", CL_CROSS_LAYER_NAME)
 
 For Each it In mySSET
 
@@ -448,6 +539,14 @@ For Each it In mySSET
 Next
 
 CAD.acadDoc.Utility.prompt "已經清除完成!" & vbNewLine
+
+With Sheets("中心線")
+
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+    
+    .Range("A3:B" & lr).ClearContents
+
+End With
 
 End Sub
 
@@ -490,12 +589,12 @@ For i = 0 To UBound(pts) - co Step co
     X0 = pts(i): Y0 = pts(i + 1)
     X1 = pts(i + co): Y1 = pts(i + 1 + co)
 
-    ptLen = math.getLengthCO(X0, Y0, X1, Y1) '兩點距
+    ptLen = Math.getLengthCO(X0, Y0, X1, Y1) '兩點距
 
-    If math.IsMiddle(X0, Y0, X, Y, X1, Y1) Then
+    If Math.IsMiddle(X0, Y0, X, Y, X1, Y1) Then
     
-        fi = math.getAz(X0, Y0, X1, Y1)
-        ptLen = math.getLengthCO(X0, Y0, X, Y)
+        fi = Math.getAz(X0, Y0, X1, Y1)
+        ptLen = Math.getLengthCO(X0, Y0, X, Y)
         sumLen = sumLen + ptLen
         myloc = Format(nowLoc + sumLen, "0K+000.0")
         

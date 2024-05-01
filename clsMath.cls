@@ -137,14 +137,48 @@ Function deg2rad(deg)
 deg2rad = deg / 180 * PI
 
 End Function
+'
+'Function TranLoc(ByVal Data As String) As Double
+'
+''樁號型態轉成可計算之樁號
+'
+'tmp = Split(Data, "+")
+'
+'If UBound(tmp) = -1 Or Data = "" Then Exit Function ' TranLoc = CDbl(Data): Exit Function
+'
+'tloc = tmp(0) '千位數
+'dloc = tmp(1)
+'
+'If dloc Like "*(*" Then
+'
+'    tmp2 = Split(dloc, "(")
+'
+'    tmp3 = Split(tmp2(0), ".")
+'
+'    dloc = tmp3(0) + tmp3(1) / 10
+'
+'End If
+'
+'For i = 1 To Len(tloc)
+'
+'    ch = mid(tloc, i, 1)
+'    If IsNumeric(ch) Then ref = ref & ch
+'
+'Next
+'
+'TranLoc = CDbl(ref) * 1000 + CDbl(dloc)
+'
+'End Function
 
 Function TranLoc(ByVal Data As String) As Double
 
 '樁號型態轉成可計算之樁號
 
+If Data = "" Then TranLoc = 0: Exit Function
+
 tmp = Split(Data, "+")
 
-If UBound(tmp) = -1 Or Data = "" Then Exit Function ' TranLoc = CDbl(Data): Exit Function
+If UBound(tmp) = 0 Then TranLoc = CDbl(Data): Exit Function
 
 tloc = tmp(0) '千位數
 dloc = tmp(1)
@@ -153,16 +187,25 @@ If dloc Like "*(*" Then
 
     tmp2 = Split(dloc, "(")
 
-    tmp3 = Split(tmp2(0), ".")
+    If tmp2(0) Like "*.*" Then
 
-    dloc = tmp3(0) + tmp3(1) / 10
+        tmp3 = Split(tmp2(0), ".")
+        dloc = tmp3(0) + tmp3(1) / 10
+    
+    Else
+    
+        dloc = tmp2(0)
+    
+    End If
+    
+    If dloc > 1000 Then Exit Function
     
 End If
 
 For i = 1 To Len(tloc)
 
-    ch = mid(tloc, i, 1)
-    If IsNumeric(ch) Then ref = ref & ch
+    loc_ch = mid(tloc, i, 1)
+    If IsNumeric(loc_ch) Then ref = ref & loc_ch
 
 Next
 

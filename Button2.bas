@@ -90,7 +90,9 @@ Set XSECs = CAD.CreateSSET("XSEC", "8", "XLINE")
 
 For Each XSEC In XSECs
 
-    If TypeName(XSEC) = "IAcadPolyline" Then
+    
+
+    If TypeName(XSEC) = "IAcadLWPolyline" Then
     
         Call CAD.GetBoundingBox(XSEC, MinX, MinY, MaxX, MaxY)
         

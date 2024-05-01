@@ -28,7 +28,7 @@ Public txtheight As Double
 Private collCurvePt As New Collection
 
 Private CAD As New clsACAD
-Private math As New clsMath
+Private Math As New clsMath
 Private CLobj As New clsCL
 
 Sub GetCurve()
@@ -63,8 +63,8 @@ pt = CAD.GetPoint("請選擇單曲線的IP點")
 
 Xip = pt(0): Yip = pt(1)
 
-thida = math.deg2rad(90 - math.getAz(Xbc, Ybc, Xip, Yip))
-thida2 = math.deg2rad(90 - math.getAz(Xip, Yip, Xec, Yec))
+thida = Math.deg2rad(90 - Math.getAz(Xbc, Ybc, Xip, Yip))
+thida2 = Math.deg2rad(90 - Math.getAz(Xip, Yip, Xec, Yec))
 
 i = thida2 - thida
 
@@ -76,7 +76,7 @@ Sub CreatePoint()
 
 Dim mypt(2) As Double
 
-fi = math.getAz(Xec, Yec, Xc, Yc)
+fi = Math.getAz(Xec, Yec, Xc, Yc)
 
 mypt(0) = Xec
 mypt(1) = Yec
@@ -93,7 +93,7 @@ For j = 0 To step
     
     Set ptObj = CAD.AddPointCO(Xec + dx, Yec + dy)
     
-    ptObj.rotate mypt, math.deg2rad(-fi + 90)
+    ptObj.rotate mypt, Math.deg2rad(-fi + 90)
     
     collCurvePt.Add ptObj
 
@@ -233,9 +233,9 @@ leapt = CAD.GetPoint("Select the note point")
 
 Set circleobj = CAD.AddCircle(mypt, txtheight / 5)
 
-deltaI = math.rad2deg(i)
+deltaI = Math.rad2deg(i)
 
-arr = Array("IP", "X=" & Round(Xip, 3), "Y=" & Round(Yip, 3), "R=" & Radius, "I=" & math.Convert_Degree(deltaI), "T=" & Round(t, 3), "Ls=" & Round(ls, 3))
+arr = Array("IP", "X=" & Round(Xip, 3), "Y=" & Round(Yip, 3), "R=" & Radius, "I=" & Math.Convert_Degree(deltaI), "T=" & Round(t, 3), "Ls=" & Round(ls, 3))
 
 For j = LBound(arr) To UBound(arr)
 
@@ -333,14 +333,14 @@ Sub PlotAlignmentArc(Xs, Ys, Xm, Ym, Xe, Ye, Radius)
 
 Dim t As Double
 
-thida = math.deg2rad(90 - math.getAz(Xs, Ys, Xm, Ym))
-thida2 = math.deg2rad(90 - math.getAz(Xm, Ym, Xe, Ye))
+thida = Math.deg2rad(90 - Math.getAz(Xs, Ys, Xm, Ym))
+thida2 = Math.deg2rad(90 - Math.getAz(Xm, Ym, Xe, Ye))
 
 deltaI = thida2 - thida
 
 t = Abs(Radius * Tan(deltaI / 2))
 
-reversefi = thida + math.deg2rad(180)
+reversefi = thida + Math.deg2rad(180)
 
 Xbc = Xm + t * Cos(reversefi)
 Ybc = Ym + t * Sin(reversefi)
@@ -354,13 +354,13 @@ Yec = Ym + t * Sin(thida2)
 
 Dim cpt(2) As Double
 
-bE = thida2 + math.deg2rad(90)
-fe = thida + math.deg2rad(90)
+bE = thida2 + Math.deg2rad(90)
+fe = thida + Math.deg2rad(90)
 
 If deltaI < 0 Then
 
-    bE = thida2 + math.deg2rad(90)
-    fe = thida + math.deg2rad(90)
+    bE = thida2 + Math.deg2rad(90)
+    fe = thida + Math.deg2rad(90)
     
     Set ar = CAD.acadDoc.ModelSpace.AddArc(cpt, Radius, bE, fe)
     
@@ -369,8 +369,8 @@ If deltaI < 0 Then
 
 Else
 
-    bE = thida2 + math.deg2rad(270)
-    fe = thida + math.deg2rad(270)
+    bE = thida2 + Math.deg2rad(270)
+    fe = thida + Math.deg2rad(270)
     
     Set ar = CAD.acadDoc.ModelSpace.AddArc(cpt, Radius, fe, bE)
     
@@ -398,24 +398,24 @@ Dim ept(2) As Double
 spt(0) = X
 spt(1) = Y
 
-ept(0) = spt(0) + math.degcos(fi - 90) * w
-ept(1) = spt(1) + math.degsin(fi - 90) * w
+ept(0) = spt(0) + Math.degcos(fi - 90) * w
+ept(1) = spt(1) + Math.degsin(fi - 90) * w
 
 Set ret = CAD.AddLine(spt, ept)
 
 For i = 0 To UBound(tmp)
     
-    ept(0) = spt(0) + math.degcos(fi - 90) * (w - 1 - i * 1.1 * txtheight)
-    ept(1) = spt(1) + math.degsin(fi - 90) * (w - 1 - i * 1.1 * txtheight)
+    ept(0) = spt(0) + Math.degcos(fi - 90) * (w - 1 - i * 1.1 * txtheight)
+    ept(1) = spt(1) + Math.degsin(fi - 90) * (w - 1 - i * 1.1 * txtheight)
     
     Dim txtpt(2) As Double
     
-    txtpt(0) = ept(0) + math.degcos(fi - 90) * 5
-    txtpt(1) = ept(1) + math.degsin(fi - 90) * 5
+    txtpt(0) = ept(0) + Math.degcos(fi - 90) * 5
+    txtpt(1) = ept(1) + Math.degsin(fi - 90) * 5
     
     Set ret = CAD.AddMixText(tmp(i), txtpt, txtheight)
 
-    ret.rotate txtpt, math.deg2rad(-fi + 90)
+    ret.rotate txtpt, Math.deg2rad(-fi + 90)
 
 Next
 

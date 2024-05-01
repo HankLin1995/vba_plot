@@ -29,7 +29,7 @@ End Function
 
 Function getMeanH(ByVal myloc As Double)
 
-Dim mymath As New clsMath
+Dim myMath As New clsMath
 
 With Sheets("ÁaÂ_­±LEVEL")
 
@@ -42,7 +42,7 @@ With Sheets("ÁaÂ_­±LEVEL")
         ec = .Cells(1, c + 1)
         eH = .Cells(2, c + 1)
         
-        getMeanH = mymath.interpolation(myloc, bc, bh, ec, eH)
+        getMeanH = myMath.interpolation(myloc, bc, bh, ec, eH)
         
         If getMeanH <> 0 Then Exit Function
         

@@ -31,7 +31,7 @@ Public IsFromTable As Boolean
 Private sht As Object
 Private ACAD As Object
 Private mo As Object
-Private math As New clsMath
+Private Math As New clsMath
 
 Private Sub Class_Initialize()
 

@@ -105,6 +105,20 @@ CD = coll(3)
 
 End Sub
 
+Sub getPropertiesByBlock_Tien(ByVal BLK As Object) ', PT_NUM, E, N)
+
+'po = BLK.InsertionPoint
+Set coll = CAD.getBlockAttr(BLK)
+po = CAD.tranIPoint(BLK.InsertionPoint)
+
+If coll.Count = 0 Then Exit Sub
+
+PT_NUM = coll(1)
+E = po(0)
+N = po(1)
+
+End Sub
+
 
 Sub getPropertiesByUser(ByVal bPT_NUM As String, ByVal bE As Double, ByVal bN As Double, ByVal bZ As Double, ByVal bCD As String)
 

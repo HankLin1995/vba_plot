@@ -10,7 +10,8 @@ Attribute VB_Exposed = False
 Private ACAD As Variant
 Private sht As Worksheet
 Private MyACAD As New clsACAD
-Private mymath As New clsMath
+Private myMath As New clsMath
+Private myFunc As New clsMyfunction
 'Private MyACAD As New clsICAD
 
 Private AllHeightData() As Variant
@@ -26,7 +27,7 @@ Private TotalLength As Double
 Private TableRow As Integer
 Private Max As Double, Min As Double
 Private NeedStep As Integer
-Private IsShowHeightTxt As Boolean
+Public IsShowHeightTxt As Boolean
 
 Public Xscale As Double
 Public Yscale As Double
@@ -37,35 +38,61 @@ Public startInterval As Double
 Public TitleWidth As Double
 Public TableMaxHeight As Double 'In order to limit the YHeight
 Public sc As Integer, Lc As Integer
+Public LocType As String
+Public NUM_DIGIT As Byte
 
 Private sr As Integer, lr As Integer
-Private rPlan As Integer, rSE As Integer, rSlope As Integer, rNote As Integer, rdeltaH
+Private rLoc As Integer, rPlan As Integer, rSE As Integer, rSlope As Integer, rNote As Integer, rdeltaH As Integer
 
 Private Sub Class_Initialize()
 
+NUM_DIGIT = 2
+
 Set sht = Sheets("縱斷面繪圖")
-
-'Set ACAD = MyACAD.acaddoc  'AutoCAD.ActiveDocument
-
-'Call MyACAD.Createfontstyle
-
-End Sub
-
-Sub ReadData() 'lr 本次產生後為模組內公用變數(private)
 
 With sht
 
-    sr = 2
-    'lc = .Cells(sr, 1).End(xlToRight).Column
-    lr = .Cells(100, 1).End(xlUp).Row
+    Set rng = .Columns("A").Find("樁號")
+    sr = rng.Row
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+    rLoc = sr
 
-    TotalLength = (mymath.TranLoc(.Cells(sr, Lc)) - mymath.TranLoc(.Cells(sr, sc))) * 1000 'mm2m
+End With
+
+myLayerArr = Array("TABLE", "TEXT", "BAR", "L-INFO")
+myLayerColorArr = Array(3, 6, 6, 7)
+
+For Each it In myLayerArr
+
+    With MyACAD.acadDoc
+    
+        .Layers.Add (it)
+        If MyACAD.CADVer = "AUTOCAD" Then .Layers(it).Color = myLayerColorArr(i)
+        
+    End With
+    
+    i = i + 1
+
+Next
+
+End Sub
+
+Sub ReadData() 'sr lr 本次產生後為模組內公用變數(private)
+
+With sht
+
+    'sr = 2 '樁號一定要放在第二列嗎?
+    'lr = .Cells(100, 1).End(xlUp).Row
+
+    TotalLength = (myMath.TranLoc(.Cells(sr, Lc)) - myMath.TranLoc(.Cells(sr, sc))) * 1000 'mm2m
     
     Call GetImportantRow '重要欄位
     Call GetAllHeightData '高程內容
+    Call GetLocArrInTableData '取得LocArr
     Call GetTableData '表格內容
     Call GetControlData '控制點
     Call GetNoteData '旗標
+    
     
     TableRow = UBound(TableData)
     
@@ -74,9 +101,9 @@ With sht
     
 End With
 
-IsShowHeightTxt = True
+'IsShowHeightTxt = True
 
-If MsgBox("不要秀出高程數字?", vbYesNo) = vbYes Then IsShowHeightTxt = False
+'If MsgBox("不要秀出高程數字?", vbYesNo) = vbYes Then IsShowHeightTxt = False
 
 End Sub
 
@@ -84,8 +111,8 @@ Private Sub GetImportantRow() '取得重要標示列位
 
 With sht
 
-    sr = 2
-    lr = .Cells(100, 1).End(xlUp).Row
+    'sr = 2
+    'lr = .Cells(100, 1).End(xlUp).Row
 
     For r = sr To lr
     
@@ -131,23 +158,16 @@ With sht
     For r = 1 To lr
     
         If .Cells(r, 1) Like "*高" Then
-            'AllHeightData(j, 0) = r
+
             AllHeightData(j, 0) = .Cells(r, 1)
             
             k = 1 '初始化
             
             For c = sc To Lc
-                
-                'HeightData(k, 0) = .Cells(2, c) '單距
-                'HeightData(k, 1) = HeightData(k, 0) + .Cells(2, c) '累距
-                
-                'If Not .Cells(2, c) Like "*(*" Then
+
                     HeightData(k) = .Cells(r, c)
                     k = k + 1
-                'End If
-                
-                'HeightData(k) = .Cells(r, c) '高程
-                'k = k + 1
+
             Next
         
             AllHeightData(j, 1) = HeightData
@@ -183,23 +203,26 @@ With sht
         TableData(j, 1) = .Cells(r, 1)
 
         For c = sc To Lc
-            
-            'Debug.Print .Cells(2, c)
-            'If Not .Cells(2, c) Like "*(*" Then
 
-            coll.Add .Cells(r, c).Value
-        
-            'End If
+            If r = rLoc Then
+            
+                If .Cells(r, c) = .Cells(r, c + 1) Then
+                    mystr = "(上)"
+                ElseIf .Cells(r, c - 1) = .Cells(r, c) Then
+                    mystr = "(下)"
+                Else
+                    mystr = ""
+                End If
+            
+                coll.Add getLocValue(.Cells(r, c).Value) & mystr
+                'coll.Add getLocValue(.Cells(r, c))
+            Else
+                coll.Add .Cells(r, c).Value
+            End If
         
         Next
-        
-        ReDim ContentArr(1 To coll.Count)
-        
-        For k = 1 To coll.Count
-        
-            ContentArr(k) = coll.Item(k)
-        
-        Next
+
+        ContentArr = myFunc.tranColl2Array(coll, 1)
 
         TableData(j, 2) = ContentArr
         
@@ -209,21 +232,57 @@ With sht
 
     Next
     
-    Call GetLocArrInTableData '取得LocArr
+    'Call GetLocArrInTableData '取得LocArr
 
 End With
 
 End Sub
 
+Private Function getLocValue(ByVal s As Double) 'ByVal rng As Object) '20220915
+
+Select Case LocType
+
+Case "A": loc_format = "0+000"
+Case "B": loc_format = "0K+000"
+
+End Select
+
+'getLocValue = Format(rng.Value, loc_format)
+getLocValue = Format(s, loc_format)
+
+If s Like "*.*" Then getLocValue = Format(s, loc_format) & Split(s, ".")(1)
+
+'beforeLoc = rng.Offset(0, -1)
+'backLoc = rng.Offset(0, 1)
+'nowLoc = rng
+'
+'If nowLoc = backLoc Then
+'    myStr = "(上)"
+'ElseIf beforeLoc = nowLoc Then
+'    myStr = "(下)"
+'Else
+'    myStr = ""
+'End If
+'
+'getLocValue = getLocValue & myStr
+
+End Function
+
 Private Sub GetLocArrInTableData()
 
-LocArr = TableData(1, 2) '樁號只能放這裡
+Dim coll As New Collection
 
-For i = 1 To UBound(LocArr)
+With sht
 
-    If LocArr(i) Like "*+*" Then LocArr(i) = mymath.TranLoc(LocArr(i))
+    For c = sc To Lc
+    
+        coll.Add .Cells(rLoc, c).Value
+    
+    Next
 
-Next
+    LocArr = myFunc.tranColl2Array(coll, 1)
+
+End With
 
 End Sub
 
@@ -275,7 +334,7 @@ With sht
 
         If .Cells(rNote, c) <> "" Then
         
-            collwhere.Add .Cells(sr, c)
+            collwhere.Add .Cells(rLoc, c)
             collsay.Add .Cells(rNote, c)
         
         End If
@@ -298,7 +357,9 @@ End Sub
 
 Sub GetScale()
 
-MsgBox "請移動至AutoCAD點選縱斷面視圖生成位置之左下角點"
+'MsgBox "請移動至AutoCAD點選縱斷面視圖生成位置之左下角點"
+
+On Error GoTo ERRORHANDLE
 
 ret2 = MyACAD.GetPoint("點選縱斷面視圖生成位置之左下角點")
 
@@ -308,15 +369,28 @@ viewpoint(1) = ret2(1)
 'Xscale = InputBox("請問X軸比例為" & vbCrLf & "1:")
 'Yscale = InputBox("請問Y軸比例為" & vbCrLf & "1:")
 
+Exit Sub
+
+ERRORHANDLE:
+
+viewpoint(0) = 0 'ret2(0)
+viewpoint(1) = 0 'ret2(1)
+
 End Sub
 
 Private Sub CreateHeightLayer()
 
 For i = 1 To UBound(AllHeightData())
 
-    HeightName = AllHeightData(i, 0)
+    heightname = AllHeightData(i, 0)
     
-    MyACAD.acadDoc.Layers.Add (HeightName)
+    Set lay = MyACAD.acadDoc.Layers.Add(heightname)
+    
+    If heightname Like "*計*" Then
+    
+        lay.Color = 3
+    
+    End If
     
     'IntelliCAD.ActiveDocument.layers.Add (HeightName)
 
@@ -342,14 +416,18 @@ For r = 1 To TableRow
     
     Set o = MyACAD.PlotRec(Ldpt, rupt)
     
-    o.Layer = "TABLE" '"縱斷面-區帶格"
+    Call MyACAD.setLayer(o, "TABLE")
+    
+    'o.Layer = "TABLE" '"縱斷面-區帶格"
     
     Ldpt(0) = X1 - Interval - TitleWidth
     rupt(0) = X1 - Interval
     
     Set o = MyACAD.PlotRec(Ldpt, rupt)
     
-    o.Layer = "TABLE" ' "縱斷面-區帶格"
+    Call MyACAD.setLayer(o, "TABLE")
+    
+    'o.Layer = "TABLE" ' "縱斷面-區帶格"
 
 Next
 
@@ -406,7 +484,7 @@ For r = 1 To TableRow
     txtpt(0) = X1 - Interval - TitleWidth / 2
     txtpt(1) = Y1 + VHeight / 2
 
-    Set txtobj = PlotTextCenter(TableTitle, txtpt, 4 / 3 * txtheight, 2)
+    Set txtobj = MyACAD.AddText(TableTitle, txtpt, 4 / 3 * txtheight, 2) ' MyACAD.addtext(TableTitle, txtpt, 4 / 3 * txtheight, 2)
     
     txtobj.Layer = "TEXT" ' "縱斷面-區帶文字"
     
@@ -416,7 +494,7 @@ Next
 
 End Sub
 
-Sub FillInTable() '資料區帶的資料
+Sub FillInTable() '資料區帶的資料 '樁號需做特殊處理
 
 Dim txtpt(2) As Double
 
@@ -430,50 +508,58 @@ For r = 1 To TableRow - 1
     Y1 = viewpoint(1) + (Interval + VHeight) * (r - 1)
 
     ContentData = TableData(r, 2)
-    'OriginLocArr = TableData(1, 2)
-    
+    'ncnt = 0
     For i = 1 To UBound(LocArr)
         
-        'OriginLoc = OriginLocArr(I)
+        Distance = (LocArr(i) - LocArr(1)) * 1000 / Xscale
         
-        If Not OriginLoc Like "*(*" Then
+        If i > 1 Then NextDistance = (LocArr(i) - LocArr(i - 1)) * 1000 / Xscale
         
-            Distance = (LocArr(i) - LocArr(1)) * 1000 / Xscale
-            
-            If i > 1 Then NextDistance = (LocArr(i) - LocArr(i - 1)) * 1000 / Xscale
-            
-            txtpt(0) = X1 + Distance
-            txtpt(1) = Y1 + VHeight / 2
-            
-            s = ContentData(i)
-            
-            If IsMoved = True Then NextDistance = NextDistance - txtheight
-            
-            If i > 1 And NextDistance < txtheight Then
-                txtpt(0) = txtpt(0) + txtheight
-                IsMoved = True
-            Else
-                IsMoved = False
-                
-            End If
-            
-            If s Like "*(*" Then
-            
-                Set txtobj = PlotTextCenter(s, txtpt, 0.8 * txtheight, 2)
-            
-            Else
-                
-                If InStr(1, s, ".") <> 0 Then s = Format(s, "0.00")
-                
-                Set txtobj = PlotTextCenter(s, txtpt, txtheight, 2)
-    
-            End If
-            
-            txtobj.rotate MyACAD.tranPoint(txtpt), 3.14 / 2
-            
-            txtobj.Layer = "TEXT" ' "縱斷面-區帶文字"
+        'Debug.Print NextDistance
         
+        txtpt(0) = X1 + Distance
+        txtpt(1) = Y1 + VHeight / 2
+        
+        s = ContentData(i)
+        
+        '******文字之間的特殊處理********
+
+        storeMove = storeMove + NextDistance
+        
+        If i > 1 And storeMove < txtheight Then
+            cnt = cnt + 1
+            txtpt(0) = txtpt(0) + txtheight * cnt
+
+        Else
+            cnt = 0
+            
         End If
+        
+        'Call MyACAD.AddPointCO(txtpt(0), txtpt(1))
+        
+'        If i > 1 And xmax < txtpt(0) Then txtpt(0) = txtpt(0) + txtheight
+'        If IsMoved = True Then NextDistance = NextDistance - txtheight
+'
+'        If i > 1 And NextDistance < txtheight Then
+'            txtpt(0) = txtpt(0) + txtheight
+'            IsMoved = True
+'        Else
+'            IsMoved = False
+'
+'        End If
+'
+        '******繪製***************
+
+        If IsNumeric(s) Then s = Round(s, NUM_DIGIT)
+        
+        Set txtobj = MyACAD.AddText(s, txtpt, txtheight, 2) ' MyACAD.addtext(s, txtpt, txtheight, 2)
+        
+        txtobj.rotate MyACAD.tranPoint(txtpt), 3.14 / 2
+        
+        txtobj.Layer = "TEXT" ' "縱斷面-區帶文字"
+        
+        'Call MyACAD.GetBoundingBox(txtobj, xmin, ymin, xmax, ymax)
+
         
     Next
 
@@ -554,9 +640,10 @@ With MyACAD 'controlobject
     
         s = Min + i * Yscale / (1000 / BarStepHeight)
     
-        Set txtobj = PlotTextCenter(s, txtpt, txtheight, 2)
+        Set txtobj = MyACAD.AddText(s, txtpt, txtheight, 2)
         
-        txtobj.Layer = "BAR" ' "縱斷面-高程條"
+        Call MyACAD.setLayer(txtobj, "BAR")
+        'txtobj.Layer = "BAR" ' "縱斷面-高程條"
         
         
     Next
@@ -584,7 +671,7 @@ With MyACAD 'controlobject
     
         s = Min + (i + 0.5) * Yscale / (1000 / BarStepHeight)
     
-        Set txtobj = PlotTextCenter(s, txtpt, txtheight, 2)
+        Set txtobj = MyACAD.AddText(s, txtpt, txtheight, 2)
         txtobj.Layer = "BAR" ' "縱斷面-高程條"
     
     Next
@@ -606,15 +693,15 @@ With MyACAD.acadDoc
 
     For i = 1 To UBound(AllHeightData)
     
-        HeightName = AllHeightData(i, 0)
+        heightname = AllHeightData(i, 0)
         HeightData = AllHeightData(i, 1)
         '-----20210706add-----
         
-        .Layers.Add ("縱斷面-" & HeightName)
+        .Layers.Add ("縱斷面-" & heightname)
         
         '---------------------
         
-        .ActiveLayer = .Layers("縱斷面-" & HeightName)
+        .ActiveLayer = .Layers("縱斷面-" & heightname)
         
         For j = 1 To UBound(LocArr) '這裡有bug，可以修改為偵測SE值
         
@@ -657,6 +744,8 @@ ReDim vertices(3 * collLoc.Count - 1)
 
 k = 0
 
+showList = WorksheetFunction.RandBetween(2, collLoc.Count)
+
 For j = 1 To collLoc.Count
 
     Distance = (collLoc.Item(j) - LocArr(1)) * 1000 / Xscale
@@ -667,18 +756,38 @@ For j = 1 To collLoc.Count
     If IsShowHeightTxt = True Then
     
         txtpt(0) = Xh: txtpt(1) = Yh + 0.4
-        Set txtobj = PlotTextCenter(collHeight.Item(j), txtpt, 0.4 * txtheight, 2)
+        Set txtobj = MyACAD.AddText(collHeight.Item(j), txtpt, 0.4 * txtheight, 2)
 
-        txtobj.Layer = "縱斷面-高程"
+        txtobj.Layer = "TEXT"
 
     End If
 
     vertices(k + 3 * (j - 1)) = Xh
     vertices(k + 1 + 3 * (j - 1)) = Yh
+    
+    If j = showList Then
+    
+        Dim spt(2) As Double
+        Dim mpt(2) As Double
+        Dim ept(2) As Double
+    
+        spt(0) = Xh
+        spt(1) = Yh
+        mpt(0) = Xh + 5
+        mpt(1) = Yh + 5
+        ept(0) = Xh + 5
+        ept(1) = Yh + 5
+        
+        prompt = MyACAD.acadDoc.ActiveLayer.Name
+    
+        Call MyACAD.AddMLeader(spt, mpt, ept, prompt, txtheight)
+    
+    End If
 
 Next
 
 Set plineobj = MyACAD.AddPolyLine(vertices)
+
 
 Set collLoc = New Collection
 Set collHeight = New Collection
@@ -702,8 +811,8 @@ Y1 = viewpoint(1) + (TableRow - 1) * (Interval + VHeight)
 
 For i = 1 To UBound(ControlData)
 
-    ConLoc = mymath.TranLoc(ControlData(i, 1))
-    If i <> UBound(ControlData) Then ConLocNext = TranLoc(ControlData(i + 1, 1))
+    ConLoc = myMath.TranLoc(ControlData(i, 1))
+    If i <> UBound(ControlData) Then ConLocNext = myMath.TranLoc(ControlData(i + 1, 1))
     mode = ControlData(i, 2)
     H = ControlData(i, 3)
     If i <> UBound(ControlData) Then hNext = ControlData(i + 1, 3)
@@ -723,7 +832,7 @@ For i = 1 To UBound(ControlData)
         Case "S"
             
             txtpt(0) = cpt(0) + VHeight / 5: txtpt(1) = cpt(1)
-            Set txtobj = PlotTextCenter(H, txtpt, txtheight, 2)
+            Set txtobj = MyACAD.AddText(H, txtpt, txtheight, 2)
             Set Arc = .AddArc(cpt, VHeight / 2, -3.14 / 2, 3.14 / 2)
             
             spt(0) = cpt(0) + VHeight / 2: spt(1) = cpt(1)
@@ -734,7 +843,7 @@ For i = 1 To UBound(ControlData)
         
             lineObj.Delete
             txtpt(0) = cpt(0): txtpt(1) = cpt(1)
-            Set txtobj = PlotTextCenter(H, txtpt, txtheight, 2)
+            Set txtobj = MyACAD.AddText(H, txtpt, txtheight, 2)
             Set circleobj = .AddCircle(cpt, VHeight / 2)
             
             spt(0) = cpt(0) + VHeight / 2: spt(1) = cpt(1)
@@ -744,7 +853,7 @@ For i = 1 To UBound(ControlData)
         Case "E"
         
             txtpt(0) = cpt(0) - VHeight / 5: txtpt(1) = cpt(1)
-            Set txtobj = PlotTextCenter(H, txtpt, txtheight, 2)
+            Set txtobj = MyACAD.AddText(H, txtpt, txtheight, 2)
             Set Arc = .AddArc(cpt, VHeight / 2, 3.14 / 2, -3.14 / 2)
     
     End Select
@@ -769,13 +878,13 @@ For i = 1 To UBound(ControlData)
     End If
      
     txtpt(0) = (spt(0) + ept(0)) / 2: txtpt(1) = (spt(1) + ept(1)) / 2 + VHeight / 4
-    Set txtobj = PlotTextCenter("L=" & (ConLocNext - ConLoc) & " M,Δh=" & Round((hNext - H), 3) & " M", txtpt, txtheight, 2)
+    Set txtobj = MyACAD.AddText("L=" & (ConLocNext - ConLoc) & " M,Δh=" & Round((hNext - H), 3) & " M", txtpt, txtheight, 2)
     
     txtpt(0) = (spt(0) + ept(0)) / 2: txtpt(1) = (spt(1) + ept(1)) / 2 - VHeight / 4
-    Set txtobj = PlotTextCenter("S=1:" & slope, txtpt, txtheight, 2)
+    Set txtobj = MyACAD.AddText("S=1:" & slope, txtpt, txtheight, 2)
     
     txtpt(0) = (spt(0) + ept(0)) / 2: txtpt(1) = (spt(1) + ept(1)) / 2 + 0.5 * VHeight + 3.5 * Interval
-    Set txtobj = PlotTextCenter("施工區域", txtpt, 4 / 3 * txtheight, 2)
+    Set txtobj = MyACAD.AddText("施工區域", txtpt, 4 / 3 * txtheight, 2)
     
 jump:
     
@@ -801,14 +910,14 @@ On Error GoTo ERRORHANDLE
 
 For i = 1 To UBound(NoteData)
 
-    LocNote = TranLoc(NoteData(i, 1))
+    LocNote = myMath.TranLoc(NoteData(i, 1))
     
     Distance = (LocNote - LocArr(1)) * 1000 / Xscale
     
     Xn = X1 + Distance
     
     If i > 1 Then
-        If LocNote - TranLoc(NoteData(i - 1, 1)) < 50 Then
+        If LocNote - myMath.TranLoc(NoteData(i - 1, 1)) < 50 Then
             t = t + 1
         Else
             t = 0
@@ -830,9 +939,9 @@ For i = 1 To UBound(NoteData)
         txtpt(0) = vertices(3) + Interval * (j - 1) + Interval
         txtpt(1) = vertices(4) + txtheight / 2 - (txtheight + Interval) * (j) + Interval
         
-        s = "Sta:" & NoteData(i, 1) & ":" & NoteArr(j)
+        s = "Sta:" & getLocValue(NoteData(i, 1)) & ":" & NoteArr(j)
         
-        Set txtobj = PlotTextCenter(s, txtpt, 4 / 3 * txtheight, 1)
+        Set txtobj = MyACAD.AddText(s, txtpt, 4 / 3 * txtheight, 1)
         
         txtobj.rotate MyACAD.tranPoint(txtpt), 3.14 / 6
         
@@ -895,30 +1004,31 @@ End Function
 Sub TableIntroduce() '縱斷面圖比例標示
 
 Dim txtpt(2)  As Double
-Dim attrcoll As New Collection
 
-txtpt(0) = viewpoint(0) - 100
-txtpt(1) = viewpoint(1)
+'Dim attrcoll As New Collection
 
-attrcoll.Add "V=1:" & Yscale
-attrcoll.Add "H=1:" & Xscale
+'txtpt(0) = viewpoint(0) - 100
+'txtpt(1) = viewpoint(1)
 
-Set o = MyACAD.InsertBlock(txtpt, "LPF_SCALE", 1, attrcoll)
+'attrcoll.Add "V=1:" & Yscale
+'attrcoll.Add "H=1:" & Xscale
 
-o.Layer = "TITLE" '"比例尺"
+'Set o = MyACAD.InsertBlock(txtpt, "LPF_SCALE", 1, attrcoll)
 
-Exit Sub
+'o.Layer = "TITLE" '"比例尺"
+
+'Exit Sub
 
 'Dim txtpt(2)  As Double
 
 txtpt(0) = viewpoint(0) - 100
 txtpt(1) = viewpoint(1) + 50
 
-Set txtobj = PlotTextCenter("橫=1:" & Xscale, txtpt, 3 * txtheight, 1)
+Set txtobj = MyACAD.AddText("橫=1:" & Xscale, txtpt, 5 / 3 * txtheight, 1)
 
 txtpt(1) = txtpt(1) - 20
 
-Set txtobj = PlotTextCenter("縱=1:" & Yscale, txtpt, 3 * txtheight, 1)
+Set txtobj = MyACAD.AddText("縱=1:" & Yscale, txtpt, 5 / 3 * txtheight, 1)
 
 End Sub
 
@@ -935,7 +1045,7 @@ With sht 'Sheets("縱斷面繪圖")
 
     For r = 2 To .Cells(2, 1).End(xlToRight).Column
     
-        collLoc.Add .Cells(2, r).Value
+        collLoc.Add Format(.Cells(2, r).Value, "0+000.0")
         'collPlanDiff.Add .Cells(rdeltaH, r).Value
         collPlanDiff.Add .Cells(rPlan, r).Value
     
@@ -974,7 +1084,7 @@ er = collBlank.Item(i + 1) - 1
         
             If collLoc.Item(j) = myloc Then
             
-                .Cells(r, 4) = collPlanDiff.Item(j) & "," & TargetType(TranLoc(myloc))
+                .Cells(r, 4) = collPlanDiff.Item(j) & "," & TargetType(myMath.TranLoc(myloc))
                 
                 Exit For
             
@@ -1026,7 +1136,7 @@ With sht
     
     For c = 2 To mylc
     
-        tmpLoc = .Cells(2, c)
+        tmpLoc = Format(.Cells(2, c), "0+000.0")
     
         tmpDiff = .Cells(rdeltaH, c)
         
@@ -1039,3 +1149,4 @@ With sht
 End With
 
 End Sub
+

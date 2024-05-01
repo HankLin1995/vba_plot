@@ -4,7 +4,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} UserForm2
    ClientHeight    =   5175
    ClientLeft      =   120
    ClientTop       =   450
-   ClientWidth     =   9390.001
+   ClientWidth     =   9390
    OleObjectBlob   =   "UserForm2.frx":0000
    StartUpPosition =   1  '©ÒÄÝµøµ¡¤¤¥¡
 End

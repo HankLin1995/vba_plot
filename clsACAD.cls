@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Private mo As Object
 Private pa As Object
-Private math As New clsMath
+Private Math As New clsMath
 Private myFunc As New clsMyfunction
 Public acadDoc As Object
 Public CADVer As String
@@ -691,20 +691,20 @@ Function PlotArrow(ByVal spt, ByVal ept, Optional ByVal size As Double = 6, Opti
 Dim cpt(2) As Double
 Dim vertices() As Double
 
-fi = math.getAz(spt(0), spt(1), ept(0), ept(1))
+fi = Math.getAz(spt(0), spt(1), ept(0), ept(1))
 thida = 90 - fi
 
 dx = size
-dy = size * Atn(math.deg2rad(rotAng))
+dy = size * Atn(Math.deg2rad(rotAng))
 
 cpt(0) = spt(0) + dx
 cpt(1) = spt(1) + dy
 
-shparr = Array(-dx & ":" & -dy, dx & ":" & -dy, -dx & ":" & dy, math.getLength(spt, ept))
+shparr = Array(-dx & ":" & -dy, dx & ":" & -dy, -dx & ":" & dy, Math.getLength(spt, ept))
 calcarr = Array("", "", "", "X")
 
 Set PlotArrow = AddPolyLineCoor(cpt, shparr, calcarr)
-PlotArrow.rotate spt, math.deg2rad(thida)
+PlotArrow.rotate tranPoint(spt), Math.deg2rad(thida)
 
 'Exit Function
 
@@ -712,7 +712,7 @@ shparr = Array(-dx & ":" & -dy, dx & ":" & -dy, 2 * dy)
 calcarr = Array("", "", "Y")
 
 Set tmp = AddPolyLineCoor(cpt, shparr, calcarr)
-tmp.rotate spt, math.deg2rad(thida)
+tmp.rotate tranPoint(spt), Math.deg2rad(thida)
 Call Hatch(tmp, 1, "SOLID")
 
 End Function
@@ -727,12 +727,12 @@ Dim mpt(2) As Double
 Dim upt(2) As Double
 Dim dpt(2) As Double
 
-fi = math.getAz(spt(0), spt(1), ept(0), ept(1))
+fi = Math.getAz(spt(0), spt(1), ept(0), ept(1))
 
 mpt(0) = (spt(0) + ept(0)) / 2
 mpt(1) = (spt(1) + ept(1)) / 2
 
-mylen = math.getLength(spt, ept)
+mylen = Math.getLength(spt, ept)
 
 If DimArrowSize > mylen / 2 * 0.8 Then DimArrowSize = mylen * 0.4
 
@@ -743,16 +743,16 @@ upt(0) = spt(0): upt(1) = spt(1) + DimExtend
 dpt(0) = spt(0): dpt(1) = spt(1) - DimExtend
 
 Set dimline1 = AddLine(dpt, upt) '左標線
-dimline1.rotate spt, math.deg2rad(90 - fi)
+dimline1.rotate spt, Math.deg2rad(90 - fi)
 
 upt(0) = ept(0): upt(1) = ept(1) + DimExtend
 dpt(0) = ept(0): dpt(1) = ept(1) - DimExtend
 
 Set dimline2 = AddLine(dpt, upt) '右標線
-dimline2.rotate ept, math.deg2rad(90 - fi)
+dimline2.rotate ept, Math.deg2rad(90 - fi)
 
-mpt(0) = mpt(0) + Dimtxtheight * 2 * math.degcos(fi - 90) + dx
-mpt(1) = mpt(1) + Dimtxtheight * 2 * math.degsin(fi - 90)
+mpt(0) = mpt(0) + Dimtxtheight * 2 * Math.degcos(fi - 90) + dx
+mpt(1) = mpt(1) + Dimtxtheight * 2 * Math.degsin(fi - 90)
 
 Select Case DimScale
 
@@ -761,7 +761,7 @@ Case "cm": Calc = 10
 
 End Select
 
-If DimContent = "" Then DimContent = math.getLength(spt, ept) / Calc '標註內容
+If DimContent = "" Then DimContent = Math.getLength(spt, ept) / Calc '標註內容
 
 Set txtobj = AddMixText(DimContent, mpt, Dimtxtheight, 2)
 'txtobj.rotate mpt, Math.deg2rad(90 - fi)
@@ -789,12 +789,13 @@ Dim txtpt(2) As Double
 txtpt(0) = ept(0)
 txtpt(1) = ept(1) + 0.7 * txtheight
 
-Set arrow = PlotArrow(spt, mpt, math.getLength(spt, mpt) / 8)
+Set arrow = PlotArrow(spt, mpt, Math.getLength(spt, mpt) / 8)
 
 Set txtobj = AddMixText(prompt, txtpt, txtheight, 1)
-Call txtobj.GetBoundingBox(Min, Max)
+Call GetBoundingBox(txtobj, MinX, MinY, MaxX, MaxY)
+'Call txtobj.GetBoundingBox(Min, Max)
 
-ept(0) = Max(0)
+ept(0) = MaxX ' Max(0)
 
 Set lineObj = AddLine(mpt, ept)
 

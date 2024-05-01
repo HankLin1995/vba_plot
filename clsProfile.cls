@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Private sht_PF As Object
 Private CAD As New clsACAD
 Private f As New clsMyfunction
-Private math As New clsMath
+Private Math As New clsMath
 
 Private collSpecificRow As New Collection
 
@@ -48,17 +48,17 @@ Function test_getLoc(ByVal Xstep As Integer)
 
 Dim coll As New Collection
 Dim f As New clsMyfunction
-Dim math As New clsMath
+Dim Math As New clsMath
 
 With sht_PF
 
 Lc = .Cells(1, .Columns.Count).End(xlToLeft).Column
 
-firstloc = math.TranLoc(.Cells(1, sc).Value)
+firstloc = Math.TranLoc(.Cells(1, sc).Value)
 
 For c = sc To ec Step Xstep
 
-    myloc = math.TranLoc(.Cells(1, c).Value)
+    myloc = Math.TranLoc(.Cells(1, c).Value)
     coll.Add myloc
 
 Next
@@ -80,9 +80,9 @@ lr = .Cells(.Rows.Count, 1).End(xlUp).Row
 
 For r = 1 To lr
 
-    HeightName = .Cells(r, 1)
+    heightname = .Cells(r, 1)
     
-    If HeightName Like "*高" Then
+    If heightname Like "*高" Then
     
         For c = sc To ec
             If .Cells(r, c) <> 0 Then: collH.Add .Cells(r, c).Value
@@ -120,9 +120,9 @@ lr = .Cells(.Rows.Count, 1).End(xlUp).Row
 
 For r = 1 To lr
 
-    HeightName = .Cells(r, 1)
+    heightname = .Cells(r, 1)
 
-    If HeightName Like "*高" Then
+    If heightname Like "*高" Then
 
         Call getHeightByRow(r)
 
@@ -207,10 +207,13 @@ With CAD 'controlobject
         
         Set lineObj = .AddLine(spt, ept)
     
-        Set xlineobj = CAD.AddXLine(spt, ept)
-        xlineobj.Layer = "XLINE"
+        Call CAD.setLayer(lineObj, "縱斷面-高程條")
     
-        lineObj.Layer = "縱斷面-高程條"
+        Set xlineObj = CAD.AddXLine(spt, ept)
+        Call CAD.setLayer(xlineObj, "XLINE")
+        'xlineObj.Layer = "XLINE"
+
+        'lineObj.Layer = "縱斷面-高程條"
     
         txtpt(0) = BaseHeightPoint(0) - 20
         txtpt(1) = BaseHeightPoint(1) + i * BarStepHeight
@@ -219,7 +222,8 @@ With CAD 'controlobject
     
         Set txtobj = PlotTextCenter(s, txtpt, txtheight, 2)
         
-        txtobj.Layer = "縱斷面-高程條"
+        'txtobj.Layer = "縱斷面-高程條"
+        Call CAD.setLayer(txtobj, "縱斷面-高程條")
         
         
     Next
@@ -275,8 +279,8 @@ For Each it In collLoc
     Set lineObj = CAD.AddLine(spt, ept)
     lineObj.Layer = "縱斷面-高程條"
     
-    Set xlineobj = CAD.AddXLine(spt, ept)
-    xlineobj.Layer = "XLINE"
+    Set xlineObj = CAD.AddXLine(spt, ept)
+    xlineObj.Layer = "XLINE"
     
     txtpt(0) = spt(0)
     txtpt(1) = ept(1) - 5 '00 '* (PaperScale / 100)

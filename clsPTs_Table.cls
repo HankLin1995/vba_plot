@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 Private collPtTable As New Collection '20210615
 
 Private sht As Object
-Private math As New clsMath
+Private Math As New clsMath
 Private pt As New clsPt 'new object 20210713
 Private myFunc As New clsMyfunction
 
@@ -130,13 +130,13 @@ For r = 2 To lr
     X = .Cells(r, 2)
     Y = .Cells(r, 3)
 
-    fi = math.getAz(X0, Y0, X, Y)
+    fi = Math.getAz(X0, Y0, X, Y)
     L = Sqr((X - X0) ^ 2 + (Y - Y0) ^ 2)
     
     thida = fi + ptang
 
-    dx = L * math.degcos(thida)
-    dy = L * math.degsin(thida)
+    dx = L * Math.degcos(thida)
+    dy = L * Math.degsin(thida)
 
     newx = X0 + dx
     newy = Y0 + dy
@@ -197,8 +197,8 @@ dy = Ye - Ys
 
 Call MovePoint(False, dx, dy)
 
-fi1 = math.getAz(Xe, Ye, Xss + dx, Yss + dy)
-fi2 = math.getAz(Xe, Ye, Xee, Yee)
+fi1 = Math.getAz(Xe, Ye, Xss + dx, Yss + dy)
+fi2 = Math.getAz(Xe, Ye, Xee, Yee)
 
 deltafi = fi2 - fi1
 
@@ -257,7 +257,7 @@ End With
 
 End Sub
 
-Sub ExportCSV() '輸出CSV,0511add,ForSTONEX
+Sub ExportCSV2() '輸出CSV,0511add,ForSTONEX
 
 Set wk = Workbooks.Add
 
@@ -286,6 +286,34 @@ f = Application.GetSaveAsFilename
 If f = "False.csv" Then MsgBox "文件尚未存檔": wk.Close False: Exit Sub
 
 wk.SaveAs Filename:=f & "csv", FileFormat:=xlCSV, CreateBackup:=False
+
+wk.Close False
+
+End With
+
+End Sub
+
+Sub ExportCSV() 'for frank
+
+Set wk = Workbooks.Add
+
+With sht
+
+lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+
+For r = 2 To lr
+
+    wk.Sheets(1).Cells(r - 1, 1) = .Cells(r, 5)
+    wk.Sheets(1).Cells(r - 1, 2) = .Cells(r, 3)
+    wk.Sheets(1).Cells(r - 1, 3) = .Cells(r, 2)
+
+Next
+
+f = Application.GetSaveAsFilename & ".csv"
+
+If f = "False.csv" Then MsgBox "文件尚未存檔": wk.Close False: Exit Sub
+
+wk.SaveAs Filename:=f, FileFormat:=xlCSV, CreateBackup:=False
 
 wk.Close False
 

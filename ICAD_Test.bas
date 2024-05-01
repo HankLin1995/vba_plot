@@ -128,7 +128,7 @@ Set PLobj = CAD.PlotRecFillet(Ldpt, rupt, 10)
 
 End Sub
 
-Sub test_getpoint()
+Sub test_getPoint()
 
 Dim CAD As New clsACAD
 

@@ -33,27 +33,27 @@ Dim o As New clsFetchURL
 
 'Call login_YLIA
 
-MsgBox "設計者：林宗漢(Hank Lin) @2021" & vbNewLine & _
+MsgBox "設計者：林宗漢(Hank Lin) @2024" & vbNewLine & _
        "" & vbNewLine & _
         "手機：0912052274" & vbNewLine & _
        "電子郵件：apple84026113@gmail.com" & vbNewLine & _
        "部落格：https://hankvba.blogspot.com/"
 On Error Resume Next
-Application.StatusBar = "設計者:林宗漢(Hank Lin) @2021"
+Application.StatusBar = "設計者:林宗漢(Hank Lin) @2024"
 On Error GoTo 0
 
-'If Now() > #12/31/2023# Then
+If Now() > #12/31/2024# Then
+
+MsgBox "請洽設計者!使用2025新版本!", vbInformation
 '
-'MsgBox "使用期限已到2023年12月31日，請重新連絡設計者!"
-'
-'With ThisWorkbook
-'    .Saved = True
+With ThisWorkbook
+    .Saved = True
 '    .ChangeFileAccess xlReadOnly
 '    Kill .FullName
-'    .Close False
-'End With
-'
-'End If
+    .Close False
+End With
+
+End If
 
 End Sub
 
