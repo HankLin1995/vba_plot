@@ -61,10 +61,10 @@ Dim scpt(2) As Double
 'arr = obj.coordinates
 
 If TypeName(obj) Like "*LWPolyline" Then
-    arr = obj.coordinates
+    arr = obj.Coordinates
     coor = 2
 ElseIf TypeName(obj) Like "*Polyline" Then
-    arr = obj.coordinates
+    arr = obj.Coordinates
     coor = 3
 ElseIf TypeName(obj) = "Double()" Then
     arr = obj
@@ -319,4 +319,29 @@ Function Convert_Degree(Decimal_Deg) As Variant
     End With
     
 End Function
+
+Function Polar2Cartesian(ByVal centerX As Double, ByVal centerY As Double, ByVal distance As Double, ByVal angle As Double, ByRef newX As Double, ByRef newY As Double)
+    newX = centerX + distance * Cos(angle)
+    newY = centerY + distance * Sin(angle)
+End Function
+
+Function Cartesian2Polar(ByVal centerX As Double, ByVal centerY As Double, ByVal pointX As Double, ByVal pointY As Double, ByRef distance As Double, ByRef angle As Double)
+    Dim dx As Double
+    Dim dy As Double
+
+    dx = pointX - centerX
+    dy = pointY - centerY
+
+    distance = Sqr(dx ^ 2 + dy ^ 2)
+    angle = Atn(dy / dx)
+
+    If dx < 0 Then
+        angle = angle + VBA.Atn(-1)
+    ElseIf dy < 0 Then
+        angle = angle + VBA.Atn(1)
+    End If
+
+    angle = angle * (180 / VBA.Atn(1))
+End Function
+
 

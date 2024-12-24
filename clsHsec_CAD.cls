@@ -22,12 +22,13 @@ Attribute VB_Exposed = False
 Private sht_EG As Object
 Private sht_CL As Object
 Private CAD As New clsACAD
-Private myFunc As New clsMyfunction
+Private myfunc As New clsMyfunction
 
 Private collEGs As New Collection
 Private collPLs As New Collection
 
 Const CL_CROSSLINE_LAYER_NAME = "CL_CROSS"
+Const CL_CROSSLINE2_LAYER_NAME = "CL_CROSS_Tri"
 
 Private Sub Class_Initialize()
 
@@ -48,7 +49,7 @@ For Each EG In EGs
 
 Next
 
-Set collEGs = myFunc.ReverseColl(collEGs) '生成時間較晚先被收集
+Set collEGs = myfunc.ReverseColl(collEGs) '生成時間較晚先被收集
 
 
 End Sub
@@ -74,7 +75,7 @@ For Each EG In EGs
 
 Next
 
-myFunc.MergeSort_array ar
+myfunc.MergeSort_array ar
 
 For i = LBound(ar) To UBound(ar)
 
@@ -86,7 +87,11 @@ End Sub
 
 Private Function getLocFromEG(ByVal EG)
 
+If TypeName(EG) Like "*Polyline*" Then
+Exit Function
+Else
 spt = CAD.tranIPoint(EG.startpoint)
+End If
 
 With sht_CL 'Sheets("中心線")
 
@@ -94,7 +99,19 @@ Set rng = .Columns(2).Find(spt(0))
 
 If rng Is Nothing Then
 
-r = getNearlyLoc(spt(0)) 'add
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+
+    For r = 3 To lr
+    
+        If Round(.Cells(r, 2) - spt(0), 3) = 0 Then
+    
+            getLocFromEG = .Cells(r, 1)
+            Exit Function
+    
+        End If
+    
+    
+    Next
 
 Else
 
@@ -126,6 +143,7 @@ End With
 
 End Function
 
+
 Sub getPLs()
 
 'CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = False
@@ -134,6 +152,8 @@ CAD.acadDoc.Layers("平面圖-點").LayerOn = False
 CAD.acadDoc.Layers("平面圖-點名").LayerOn = False
 CAD.acadDoc.Layers("平面圖-點高程").LayerOn = False
 CAD.acadDoc.Layers("平面圖-點編碼").LayerOn = False
+CAD.acadDoc.Layers("CL_CROSS_TRI").LayerOn = False
+CAD.acadDoc.Layers("CL_CROSS_TXT").LayerOn = False
 
 Set PLs = CAD.CreateSSET("SS2")
 
@@ -153,7 +173,8 @@ CAD.acadDoc.Layers("平面圖-點").LayerOn = True
 CAD.acadDoc.Layers("平面圖-點名").LayerOn = True
 CAD.acadDoc.Layers("平面圖-點高程").LayerOn = True
 CAD.acadDoc.Layers("平面圖-點編碼").LayerOn = True
-
+CAD.acadDoc.Layers("CL_CROSS_TRI").LayerOn = True
+CAD.acadDoc.Layers("CL_CROSS_TXT").LayerOn = True
 End Sub
 
 Sub getEGTable(ByVal IsFromTable As Boolean)
@@ -190,10 +211,10 @@ For Each EG In collEGs
                 X1 = crossPT(i)
                 Y1 = crossPT(i + 1)
     
-                Distance = Sqr((X1 - X0) ^ 2 + (Y1 - Y0) ^ 2)
+                distance = Sqr((X1 - X0) ^ 2 + (Y1 - Y0) ^ 2)
                 Z = PLobj.interpolation(crossPT, IsFromTable, collPT_Table)
                 
-                Call AppenData(getLocFromEG(EG), Distance, Z, CD, IsFirst)
+                Call AppenData(getLocFromEG(EG), distance, Z, CD, IsFirst)
                 
             Next
 

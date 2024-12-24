@@ -213,8 +213,8 @@ Dim mid As Long
 Dim i As Long
 Dim j As Long
 Dim k As Long
-Dim X As Long
-Dim Y As Long
+Dim x As Long
+Dim y As Long
 Dim sortMode As Long
 Dim arr1
 Dim arr2
@@ -267,7 +267,7 @@ ElseIf IsNull(sortKeys) Then
     sortKeys = Array(LBound(arr))
 End If
 
-Y = LBound(sortKeys)
+y = LBound(sortKeys)
 mid = Int((UBound(arr) + IIf(LBound(arr) = 0, 1, 0)) / 2)
 
 If mid < LBound(arr) Then mid = LBound(arr)
@@ -334,36 +334,36 @@ If sortMode = 1 Then
     Wend
 ElseIf sortMode = 2 Then
 While j <= UBound(arr1) And k <= UBound(arr2)
-    If arr1(j, sortKeys(Y)) < arr2(k, sortKeys(Y)) _
-    Or (arr1(j, sortKeys(Y)) = arr2(k, sortKeys(Y)) And UBound(sortKeys) = Y) Then
-    For X = LBound(arr1, 2) To UBound(arr1, 2)
-        arr(i, X) = arr1(j, X)
-        Next X
+    If arr1(j, sortKeys(y)) < arr2(k, sortKeys(y)) _
+    Or (arr1(j, sortKeys(y)) = arr2(k, sortKeys(y)) And UBound(sortKeys) = y) Then
+    For x = LBound(arr1, 2) To UBound(arr1, 2)
+        arr(i, x) = arr1(j, x)
+        Next x
         j = j + 1
-        Y = LBound(sortKeys)
-    ElseIf arr1(j, sortKeys(Y)) > arr2(k, sortKeys(Y)) Then
-        For X = LBound(arr2, 2) To UBound(arr2, 2)
-            arr(i, X) = arr2(k, X)
-        Next X
+        y = LBound(sortKeys)
+    ElseIf arr1(j, sortKeys(y)) > arr2(k, sortKeys(y)) Then
+        For x = LBound(arr2, 2) To UBound(arr2, 2)
+            arr(i, x) = arr2(k, x)
+        Next x
         k = k + 1
-        Y = LBound(sortKeys)
+        y = LBound(sortKeys)
     Else
         i = i - 1
-         Y = Y + 1
+         y = y + 1
     End If
     i = i + 1
 Wend
 While j <= UBound(arr1)
-    For X = LBound(arr1, 2) To UBound(arr1, 2)
-    arr(i, X) = arr1(j, X)
-    Next X
+    For x = LBound(arr1, 2) To UBound(arr1, 2)
+    arr(i, x) = arr1(j, x)
+    Next x
     j = j + 1
     i = i + 1
 Wend
 While k <= UBound(arr2)
-    For X = LBound(arr2, 2) To UBound(arr2, 2)
-    arr(i, X) = arr2(k, X)
-    Next X
+    For x = LBound(arr2, 2) To UBound(arr2, 2)
+    arr(i, x) = arr2(k, x)
+    Next x
     k = k + 1
     i = i + 1
 Wend

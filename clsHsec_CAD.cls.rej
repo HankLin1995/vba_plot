@@ -1,0 +1,26 @@
+diff a/clsHsec_CAD.cls b/clsHsec_CAD.cls	(rejected hunks)
+@@ -125,24 +125,6 @@
+ 
+ End Function
+ 
+-Private Function getNearlyLoc(ByVal pt_x As Double) 'add
+-
+-With sht_CL
+-
+-    lr = .Cells(.Rows.Count, 2).End(xlUp).Row
+-    
+-    For r = 3 To lr
+-    
+-        diff = .Cells(r, 2) - pt_x
+-        
+-        If diff < 1 Then getNearlyLoc = r: Exit Function
+-    
+-    Next
+-
+-End With
+-
+-End Function
+-
+ Sub getPLs()
+ 
+ 'CAD.acadDoc.Layers("平面圖-橫斷樁").LayerOn = False

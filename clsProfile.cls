@@ -209,8 +209,13 @@ With CAD 'controlobject
     
         Call CAD.setLayer(lineObj, "縱斷面-高程條")
     
+        If CAD.CADVer <> "ICAD" Then
+    
         Set xlineObj = CAD.AddXLine(spt, ept)
         Call CAD.setLayer(xlineObj, "XLINE")
+        
+        End If
+        
         'xlineObj.Layer = "XLINE"
 
         'lineObj.Layer = "縱斷面-高程條"
@@ -279,8 +284,13 @@ For Each it In collLoc
     Set lineObj = CAD.AddLine(spt, ept)
     lineObj.Layer = "縱斷面-高程條"
     
+    If CAD.CADVer <> "ICAD" Then
+    
+    
     Set xlineObj = CAD.AddXLine(spt, ept)
     xlineObj.Layer = "XLINE"
+    
+    End If
     
     txtpt(0) = spt(0)
     txtpt(1) = ept(1) - 5 '00 '* (PaperScale / 100)

@@ -14,7 +14,7 @@ Private FA As Double
 
 Private CAD As New clsACAD
 Private Math As New clsMath
-Private myFunc As New clsMyfunction
+Private myfunc As New clsMyfunction
 Private shtCL As Object
 Private shtReport As Object
 Private shtLsec As Object
@@ -376,16 +376,19 @@ End Function
 Function getDLArea(ByVal EG, ByVal DL)
 
 Set PLobj1 = RevisePL(EG)
-EG.Delete
 
-PL1_X = myFunc.tranColl2Array(getcoll(PLobj1, "X"))
-PL1_Y = myFunc.tranColl2Array(getcoll(PLobj1, "Y"))
+PL1_X = myfunc.tranColl2Array(getcoll(PLobj1, "X"))
+PL1_Y = myfunc.tranColl2Array(getcoll(PLobj1, "Y"))
+
+PLobj1.Delete
 
 Set PLobj2 = RevisePL(DL)
 DL.Delete
 
-PL2_X = myFunc.tranColl2Array(getcoll(PLobj2, "X"))
-PL2_Y = myFunc.tranColl2Array(getcoll(PLobj2, "Y"))
+PL2_X = myfunc.tranColl2Array(getcoll(PLobj2, "X"))
+PL2_Y = myfunc.tranColl2Array(getcoll(PLobj2, "Y"))
+
+'PLobj2.Delete
 
 Call defineBorder(PL1_X, PL2_X, BL, BR)
 
@@ -400,7 +403,7 @@ Dim coll As New Collection
 co = 3
 If TypeName(PLobj) Like "*LWPolyline" Then co = 2  'IIcadLightWeightPolyline
 
-arr = CAD.tranIPoints(PLobj.coordinates)
+arr = CAD.tranIPoints(PLobj.Coordinates)
 
 Debug.Print TypeName(PLobj)
 
@@ -429,7 +432,7 @@ End Function
 
 Function calculateArea_test(ByVal PL1_X, ByVal PL1_Y, ByVal PL2_X, ByVal PL2_Y, ByVal BL, ByVal BR)
 
-X_sort = myFunc.BubbleSort_array(myFunc.combineArray(PL1_X, PL2_X))
+X_sort = myfunc.BubbleSort_array(myfunc.combineArray(PL1_X, PL2_X))
 
 For i = LBound(X_sort) To UBound(X_sort) - 1
     
@@ -500,7 +503,7 @@ getIntersectX = X1 + dY_f / slope_change
 
 End Function
 
-Function getYbyX(ByVal X As Double, ByVal PL_X, ByVal PL_Y)
+Function getYbyX(ByVal x As Double, ByVal PL_X, ByVal PL_Y)
 
 For i = LBound(PL_X) To UBound(PL_X) - 1
     
@@ -511,10 +514,10 @@ For i = LBound(PL_X) To UBound(PL_X) - 1
     
     If X1 = X2 Then X2 = X2 + 0.001: Stop
     
-    If X >= X1 And X <= X2 Then
+    If x >= X1 And x <= X2 Then
         
-        s1 = X - X1
-        s2 = X2 - X
+        s1 = x - X1
+        s2 = X2 - x
         getYbyX = (s1 * Y2 + s2 * Y1) / (s1 + s2)
         
         Exit For
@@ -552,7 +555,7 @@ Dim coll As New Collection
 co = 3
 If TypeName(PLobj) Like "*LWPolyline" Then co = 2
 
-arr = CAD.tranIPoints(PLobj.coordinates)
+arr = CAD.tranIPoints(PLobj.Coordinates)
 
 j = 1: If mode = "X" Then j = 0
 

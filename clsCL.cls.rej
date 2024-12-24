@@ -1,0 +1,10 @@
+diff a/clsCL.cls b/clsCL.cls	(rejected hunks)
+@@ -238,7 +238,7 @@
+ 
+ Set lineObj = CAD.AddLine(spt, ept)
+ 
+-'Call CAD.setLayer(lineObj, CL_CROSS_LAYER_NAME)
++Call CAD.setLayer(lineObj, CL_CROSS_LAYER_NAME)
+ 
+ 'Call CAD.setLayer(lineObj, "������-���_��L")
+ 

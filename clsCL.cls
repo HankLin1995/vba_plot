@@ -35,6 +35,8 @@ Public BLnext As Double '流心連線距離
 Const NUM_DIGIT = 1
 Const CL_LAYER_NAME = "CL"
 Const CL_CROSS_LAYER_NAME = "CL_CROSS"
+Const CL_CROSS_TRI_LAYER_NAME = "CL_CROSS_TRI"
+Const CL_CROSS_TEXT_LAYER_NAME = "CL_CROSS_TXT"
 
 Private Sub Class_Initialize()
 
@@ -48,6 +50,7 @@ Dim nextL As Double
 Dim storeLen As Double
 
 CAD.acadDoc.Layers.Add CL_CROSS_LAYER_NAME
+CAD.acadDoc.Layers.Add CL_CROSS_TEXT_LAYER_NAME
 
 IsFirst = True
 
@@ -209,9 +212,9 @@ If CL Is Nothing Then
 End If
 
 If CAD.CADVer = "ICAD" Then
-    pts = CAD.tranIPoints(CL.coordinates)
+    pts = CAD.tranIPoints(CL.Coordinates)
 Else
-    pts = CL.coordinates
+    pts = CL.Coordinates
 End If
 
 totalLen = CL.Length
@@ -222,7 +225,7 @@ End Sub
 
 Sub DrawCrossLine(ByVal X0 As Double, ByVal Y0 As Double, ByVal fi As Double, ByVal myloc As String)
 
-CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers(CL_CROSS_LAYER_NAME) '("平面圖-橫斷樁")
+CAD.acadDoc.ActiveLayer = CAD.acadDoc.Layers(CL_CROSS_TEXT_LAYER_NAME) '("平面圖-橫斷樁")
 
 Dim spt(2) As Double
 Dim ept(2) As Double
@@ -235,7 +238,7 @@ ept(1) = Y0 + Math.degsin(fi + 90) * w
 
 Set lineObj = CAD.AddLine(spt, ept)
 
-'Call CAD.setLayer(lineObj, CL_CROSS_LAYER_NAME)
+Call CAD.setLayer(lineObj, CL_CROSS_LAYER_NAME)
 
 'Call CAD.setLayer(lineObj, "平面圖-橫斷樁L")
 
@@ -271,15 +274,17 @@ Dim spt(2) As Double
 Dim Tri As Object
 Dim vertices(4 * 3 - 1) As Double
 
-X = dpt(0): Y = dpt(1)
+x = dpt(0): y = dpt(1)
 
-vertices(0) = X: vertices(1) = Y
-vertices(3) = X: vertices(4) = Y + dy 'w / 5
-vertices(6) = X + dx: vertices(7) = Y
-vertices(9) = X: vertices(10) = Y
+vertices(0) = x: vertices(1) = y
+vertices(3) = x: vertices(4) = y + dy 'w / 5
+vertices(6) = x + dx: vertices(7) = y
+vertices(9) = x: vertices(10) = y
 
 Set Tri = CAD.AddPolyLine(vertices)
 Tri.rotate CAD.tranPoint(dpt), Math.deg2rad(-fi)
+
+Call CAD.setLayer(Tri, CL_CROSS_TRI_LAYER_NAME)
 
 Call CAD.Hatch(Tri, 1, "SOLID")
 
@@ -572,7 +577,7 @@ shtCL.Range("I1") = Join(arr, ",")
 
 End Sub
 
-Sub getSpecificLoc(ByVal X As Double, ByVal Y As Double)
+Sub getSpecificLoc(ByVal x As Double, ByVal y As Double)
 
 tmp = Split(shtCL.Range("I1"), ",")
 w = tmp(0)
@@ -591,14 +596,14 @@ For i = 0 To UBound(pts) - co Step co
 
     ptLen = Math.getLengthCO(X0, Y0, X1, Y1) '兩點距
 
-    If Math.IsMiddle(X0, Y0, X, Y, X1, Y1) Then
+    If Math.IsMiddle(X0, Y0, x, y, X1, Y1) Then
     
         fi = Math.getAz(X0, Y0, X1, Y1)
-        ptLen = Math.getLengthCO(X0, Y0, X, Y)
+        ptLen = Math.getLengthCO(X0, Y0, x, y)
         sumLen = sumLen + ptLen
         myloc = Format(nowLoc + sumLen, "0K+000.0")
         
-        Call DrawCrossLine(X, Y, fi, myloc)
+        Call DrawCrossLine(x, y, fi, myloc)
         
         Exit Sub
 

@@ -28,7 +28,7 @@ Private MainCONC As Object
 Private buttomCONC As Object
 
 Private CAD As New clsACAD
-Private myFunc As New clsMyfunction
+Private myfunc As New clsMyfunction
 Private sht As Object
 Private shtChannelType As Object
 
@@ -136,7 +136,9 @@ rupt(1) = CenterPoint(1) - BT
 
 Set buttomCONC = CAD.PlotRec(Ldpt, rupt)
 
-buttomCONC.Layer = "CON" ' "橫斷面-結構線"
+Call CAD.setLayer(buttomCONC, "CON")
+
+'buttomCONC.Layer = "CON" ' "橫斷面-結構線"
 
 Ldpt(0) = CenterPoint(0)
 Ldpt(1) = CenterPoint(1) + (RH + LH) / 2 + 4 * OW
@@ -144,8 +146,8 @@ rupt(0) = CenterPoint(0)
 rupt(1) = CenterPoint(1) - 3 * BT
 
 Set lineObj = CAD.AddLine(Ldpt, rupt)
-
-lineObj.Layer = "CL" ' "橫斷面-中心線"
+Call CAD.setLayer(lineObj, "CL")
+'lineObj.Layer = "CL" ' "橫斷面-中心線"
 
 End Sub
 
@@ -170,7 +172,7 @@ Set DL = CAD.AddLWPolyLine(vertices)
 Call CAD.setLayer(DL, "CAL")
 'DL.Layer = "CAL" ' "橫斷面-挖方線"
 
-retpt = myFunc.SortPTArray(CAD.IntersectWith(DL, EG, 1, IsIntersect))
+retpt = myfunc.SortPTArray(CAD.IntersectWith(DL, EG, 1, IsIntersect))
 
 If IsIntersect = False Then Exit Sub
 
@@ -209,6 +211,74 @@ With Sheets("中心線")
     
     r = rng.Row
     .Cells(r, 5) = DLArea
+    
+    End If
+
+End With
+
+End Sub
+
+
+Sub plotDigLine2(ByVal EG As Object, ByVal EGVertices)
+
+Dim IsIntersect As Boolean
+
+Call CAD.GetBoundingBox(buttomCONC, MinX, MinY, MaxX, MaxY)
+
+Dim vertices(4 * 2 - 1) As Double
+
+vertices(0) = MinX
+vertices(1) = MinY + 100
+vertices(2) = MinX
+vertices(3) = MinY
+vertices(4) = MaxX
+vertices(5) = MinY
+vertices(6) = MaxX
+vertices(7) = MinY + 100
+
+Set DL = CAD.AddLWPolyLine(vertices)
+Call CAD.setLayer(DL, "FAL")
+'DL.Layer = "CAL" ' "橫斷面-挖方線"
+
+retpt = myfunc.SortPTArray(CAD.IntersectWith(DL, EG, 1, IsIntersect))
+
+If IsIntersect = False Then Exit Sub
+
+vertices(0) = retpt(0, 0)
+vertices(1) = retpt(0, 1)
+
+vertices(6) = retpt(UBound(retpt, 1), 0) '- 3 + 1)
+vertices(7) = retpt(UBound(retpt, 1), 1) '- 3 + 2)
+
+'========以邊界為基準================
+
+'vertices(0) = EGVertices(0)
+'vertices(1) = EGVertices(1)
+'vertices(6) = EGVertices(UBound(EGVertices) - 1)
+'vertices(7) = EGVertices(UBound(EGVertices))
+
+'====================================
+
+DL.Delete
+
+Set DL2 = CAD.AddLWPolyLine(vertices)
+
+DL2.Layer = "FAL" '"橫斷面-挖方線"
+
+'============匯入挖方面積==================
+
+Dim stoneObj As New clsStone
+
+DLArea = stoneObj.getDLArea(EG, DL2)
+
+With Sheets("中心線")
+    
+    Set rng = .Columns(1).Find(loc)
+    
+    If Not rng Is Nothing Then
+    
+    r = rng.Row
+    .Cells(r, 6) = .Cells(r, 5) - DLArea
     
     End If
 

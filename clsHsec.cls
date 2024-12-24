@@ -219,6 +219,7 @@ With sht_EG
             Uobj.ReadDataFromXLS (planType)
             Uobj.DrawMainStructure
             Call Uobj.plotDigLine(EG, EGVertices)
+            Call Uobj.plotDigLine2(EG, EGVertices)
         
         End If
         
@@ -271,6 +272,8 @@ Dim RightGroundPt(2) As Double
 
 LeftGroundPt(0) = EGVertices(0)
 LeftGroundPt(1) = EGVertices(1)
+
+On Error Resume Next
 
 Set o = CAD.InsertBlock(LeftGroundPt, "LeftGL", PaperScale, Array(collENV(leftENVcode)))
 Call CAD.setLayer(o, "GL")

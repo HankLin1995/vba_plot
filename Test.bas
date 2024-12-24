@@ -1,4 +1,20 @@
 Attribute VB_Name = "Test"
+Sub cmdRebuildPLs()
+
+Dim CAD As New clsACAD
+
+Set sset = CAD.CreateSSET("SS1")
+
+For Each PL In sset
+
+    Dim PLobj As New clsPL
+    
+    Call PLobj.getPropertiesByPL(PL)
+    Call PLobj.rebuildPL
+
+Next
+
+End Sub
 
 
 Sub checkBlockExist(blockName)
@@ -33,7 +49,7 @@ If Not blockFound Then
     End If
     
     On Error GoTo ERRORHANDLE '即便有錯誤但還是會生出Point?
-    Call CAD.acadDoc.ModelSpace.InsertBlock(insertPoint, blockFilePath, 1, 1, 1, 0)
+    Call CAD.acadDoc.ModelSpace.InsertBlock(CAD.tranPoint(insertPoint), blockFilePath, 1, 1, 1, 0)
     
 End If
 
@@ -77,10 +93,10 @@ For i = 1 To cnt
 
 pt = CAD.GetPoint("請點選要標註的點資料")
 
-X = Round(pt(0), 3)
-Y = Round(pt(1), 3)
+x = Round(pt(0), 3)
+y = Round(pt(1), 3)
 
-Call o.getPropertiesByUser("放樣", X, Y, X, Y)
+Call o.getPropertiesByUser("放樣", x, y, x, y)
 Call o.CreatePoint(0.5)
 Call o.AppendData
 
@@ -88,23 +104,23 @@ Next
 
 End Sub
 
-Sub test_createXYpt(ByVal X As Double, ByVal Y As Double)
+Sub test_createXYpt(ByVal x As Double, ByVal y As Double)
 
 Dim CAD As New clsACAD
 
-Call CAD.AddPointCO(X, Y)
+Call CAD.AddPointCO(x, y)
 
 Dim txtpt(2) As Double
 
-txtpt(0) = X + 10
-txtpt(1) = Y - 5
+txtpt(0) = x + 10
+txtpt(1) = y - 5
 
-Call CAD.AddText("X=" & CStr(X), txtpt, 5)
+Call CAD.AddText("X=" & CStr(x), txtpt, 5)
 
-txtpt(0) = X + 10
-txtpt(1) = Y - 15
+txtpt(0) = x + 10
+txtpt(1) = y - 15
 
-Call CAD.AddText("Y=" & CStr(Y), txtpt, 5)
+Call CAD.AddText("Y=" & CStr(y), txtpt, 5)
 
 End Sub
 
@@ -200,8 +216,8 @@ Dim CAD As New clsACAD
 
 Dim basept(2) As Double
 
-X = 0 'BaseHeightPoint(0)
-Y = 0 ' BaseHeightPoint(1)
+x = 0 'BaseHeightPoint(0)
+y = 0 ' BaseHeightPoint(1)
 
 Call obj.setBaseHeightPT(basept)  'CAD.GetPoint("Select the BaseHeightPoint"))
 Call obj.getPropertiesByRows(2, 13)
@@ -289,7 +305,7 @@ rr = 2
 
 For Each PL In o
 
-    pts = PL.coordinates
+    pts = PL.Coordinates
     co = 3: If TypeName(PL) Like "*LWPolyline" Then co = 2
     
     For i = 0 To UBound(pts) Step co
@@ -390,21 +406,21 @@ For Each it In sset
     
     'Set pointObject = CAD.AddPoint(o)
     
-    X = o(0)
-    Y = o(1)
+    x = o(0)
+    y = o(1)
     
     Dim txtpt(2) As Double
     
-    txtpt(0) = X
-    txtpt(1) = Y - 200
+    txtpt(0) = x
+    txtpt(1) = y - 200
     
     BoundaryArea = Round(it.area / 10000, 2) '& "m2"
 
     Set txtobject = CAD.AddText(BoundaryArea, txtpt, 200, 2)
     Call CAD.AddTextBox(txtobject)
     
-    txtpt(0) = X
-    txtpt(1) = Y + 200
+    txtpt(0) = x
+    txtpt(1) = y + 200
     
     Call CAD.AddText("A" & j, txtpt, 200, 2)
 

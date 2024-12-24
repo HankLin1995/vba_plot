@@ -28,6 +28,32 @@ Set sht = Sheets("Á`ªí")
 
 End Sub
 
+Function getNearlyPointHeight(ByVal X1, ByVal Y1, ByVal diff, ByRef nearX, ByRef nearY)
+
+With sht
+
+    lr = .Cells(.Rows.Count, 1).End(xlUp).Row
+    
+    For r = 2 To lr
+    
+        X0 = .Cells(r, 2)
+        Y0 = .Cells(r, 3)
+        Z = .Cells(r, 4)
+        distance = Math.getLengthCO(X0, Y0, X1, Y1)
+        
+        If distance < diff Then
+            nearX = X0
+            nearY = Y0
+            getNearlyPointHeight = Z
+            Exit For
+        End If
+    
+    Next
+
+End With
+
+End Function
+
 Function getCollPointTable()
 
 Dim coll As New Collection

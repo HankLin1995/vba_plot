@@ -364,13 +364,11 @@ PaperScale = Val(InputBox("請輸入圖紙比例", , 100))
 
 xrange = Val(InputBox("請輸入各樁號X偏移距離", , 10000))
 yrange = Val(InputBox("請輸入各樁號Y偏移距離", , 2000))
-times = Val(InputBox("請輸入切換個數", , 3))
+times = Val(InputBox("請輸入切換個數", , 100))
 
 Call checkBlockExist("LeftGL")
 Call checkBlockExist("RightGL")
 Call checkBlockExist("H_TITLE")
-
-
 
 Set collENV = obj.getENVcoll  '取得環境資訊
 
@@ -619,11 +617,11 @@ Sub cmdImportTXT()
     Dim FileContent As String
     Dim Lines() As String
     Dim Line As String
-    Dim myFunc As New clsMyfunction
+    Dim myfunc As New clsMyfunction
     
     Set sht = Sheets("總表")
     
-    Call myFunc.ClearData(sht, 2, 1, 5)
+    Call myfunc.ClearData(sht, 2, 1, 5)
     
     'FilePath = "G:\我的雲端硬碟\CADVBA\平面圖課程資料\20190328.asc"
     

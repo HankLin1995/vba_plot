@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Private CAD As New clsACAD
 Private Math As New clsMath
 Private pt As New clsPt
-Private myFunc As New clsMyfunction
+Private myfunc As New clsMyfunction
 
 Public PL As Object
 Public PLname As String '不是那麼重要
@@ -21,6 +21,48 @@ Private totalLen As Double
 Private sht_PL As Object
 
 Const NUM_DIGIT As Integer = 4
+
+Function rebuildPL()
+
+Dim coll As New Collection
+Dim ptsObj As New clsPTs_Table
+
+myCoordinates = PL.Coordinates
+
+For i = 0 To UBound(myCoordinates) Step co
+
+    x = myCoordinates(i)
+    y = myCoordinates(i + 1)
+    diff = 0.01
+    
+    Z = ptsObj.getNearlyPointHeight(x, y, diff, nearX, nearY)
+
+    coll.Add nearX
+    coll.Add nearY
+    coll.Add Z
+
+Next
+
+newCoordinates = myfunc.tranColl2Array(coll)
+
+Dim newPts() As Double
+
+ReDim newPts(0 To UBound(newCoordinates))
+
+For i = 0 To UBound(newCoordinates)
+
+    newPts(i) = newCoordinates(i)
+
+Next
+
+Set newPL = CAD.AddPolyLine(newPts)
+
+newPL.Layer = PLname
+
+PL.Delete
+
+End Function
+
 
 Sub createPLByRow(ByVal r As Integer)
 
@@ -56,7 +98,7 @@ End Sub
 Sub getPropertiesByPL(bPL) 'get the PL object
 
 Set PL = bPL
-pts = CAD.tranIPoints(PL.coordinates)
+pts = CAD.tranIPoints(PL.Coordinates)
 totalLen = PL.Length
 co = 3: If TypeName(PL) Like "*LWPolyline" Then co = 2
 PLname = PL.Layer
@@ -197,16 +239,26 @@ arr = pts
 
 For i = 0 To UBound(pts) - co Step co
 
+
+    'If i = 22 Then Stop
         '---------------------------------------------------------------
 
-    beforeX = Format(Round(arr(i), 4), "0.000")
-    beforeY = Format(Round(arr(i + 1), 4), "0.000")
+   ' beforeX = Format(Round(arr(i), 4), "0.000")
+   ' beforeY = Format(Round(arr(i + 1), 4), "0.000")
+    
+    beforeX = Round(arr(i), 4)
+    beforeY = Round(arr(i + 1), 4)
     
     If co = 3 Then beforeH = arr(i + 2) '線對應點資料擴充模組
     If IsFromTable = True Then beforeH = getZfromCollPointTable(beforeX & ":" & beforeY, CollPointTable)
     
-    afterX = Format(Round(arr(i + co), 4), "0.000")
-    afterY = Format(Round(arr(i + co + 1), 4), "0.000")
+    'Debug.Print beforeX & ">" & beforeY
+    
+    'afterX = Format(Round(arr(i + co), 4), "0.000")
+    'afterY = Format(Round(arr(i + co + 1), 4), "0.000")
+    
+    afterX = Round(arr(i + co), 4)
+    afterY = Round(arr(i + co + 1), 4)
     
     If co = 3 Then afterH = arr(i + co + 2) '線對應點資料擴充模組
     If IsFromTable = True Then afterH = getZfromCollPointTable(afterX & ":" & afterY, CollPointTable)
@@ -269,14 +321,14 @@ End Function
 
 Function getZfromCollPointTable(ByVal findkey As String, ByVal collPT_Table)
 
-On Error Resume Next
+On Error GoTo ERRORHANDLE
 getZfromCollPointTable = collPT_Table(findkey)
-On Error GoTo 0
 
 Exit Function
 
 ERRORHANDLE:
 getZfromCollPointTable = 0
+Debug.Print findkey
 
 End Function
 
@@ -288,10 +340,10 @@ End Sub
 
 Sub createPTbyPLfromTable() '20210802
 
-Dim PTsObj As New clsPTs_Table
+Dim ptsObj As New clsPTs_Table
 Dim pt As New clsPt
 
-Set coll = PTsObj.getCollPointTable_TYLin 'FIX_POINT
+Set coll = ptsObj.getCollPointTable_TYLin 'FIX_POINT
 
 For j = 0 To UBound(pts) Step co
 
@@ -318,10 +370,10 @@ Sub checkZFromTable(ByVal r As Double) '20210802
 
 'r是指radius
 
-Dim PTsObj As New clsPTs_Table
+Dim ptsObj As New clsPTs_Table
 Dim pt As New clsPt
 
-Set coll = PTsObj.getCollPointTable
+Set coll = ptsObj.getCollPointTable
 
 For j = 0 To UBound(pts) Step co
 
@@ -334,18 +386,20 @@ For j = 0 To UBound(pts) Step co
 
     If IsEmpty(Z) Then
     
+        Debug.Print mykey
+    
         Call getMinZ(X1, Y1, Z, d)
-        
+
         Call pt.getPropertiesByUser("999", X1, Y1, Z, "ADD")
         Call pt.CreatePoint(0.5)
-        
+
         If d > 1 Then
-        
+
         Set circleobj = CAD.AddCircleCO(X1, Y1, r)
-        circleobj.Layer = "平面圖-注意點"
-        
+        circleobj.Layer = "0"
+
         PL.Color = 3
-        
+
         End If
     
     End If
@@ -394,10 +448,10 @@ Dim ptObj As New clsPt
 
 For j = 0 To UBound(pts) Step co
 
-    X = Round(pts(j), 3)
-    Y = Round(pts(j + 1), 3)
+    x = Round(pts(j), 3)
+    y = Round(pts(j + 1), 3)
 
-    Call ptObj.getPropertiesByUser("放樣", X, Y, X, Y)
+    Call ptObj.getPropertiesByUser("放樣", x, y, x, y)
     Call ptObj.CreatePoint(0.5)
     Call ptObj.AppendData
 
